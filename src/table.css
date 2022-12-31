@@ -1,0 +1,11 @@
+.hide {
+    display: none;
+}
+
+.delete-button{
+    display: inline;
+}
+
+.table {
+    margin: auto;
+}

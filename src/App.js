@@ -1,25 +1,97 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Wheel from './Wheel';
+import OptionTable from './OptionTable'
+import SpinPage from './SpinPage';
+import {db} from './firebase-config'
+import { useNavigate } from "react-router-dom";
+
+
+import './styles.css';
+import { async } from '@firebase/util';
+import { collection, getDocs } from 'firebase/firestore'
+import { getAllByRole } from '@testing-library/react';
+import { auth } from './firebase-config';
+
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import AdminPage from './AdminPage';
+import ProtectedRoute from './ProtectedRoute';
+import PublicRoute from './PublicRoute';
+
+import { constructWheelArray } from './function'
+import EmailPage from './EmailPage';
+import ChartPage from './ChartPage';
+import SignInPage from './SignIn'; 
+
+import './styles.css'
+
+export default function App () {
+    const [wheelElements, setWheelElements] = useState([]);
+    const [tableValues, setTableValues] = useState([]);
+    const [user, setUser] = useState([]);
+    
+    const wheelCollectionRef = collection(db, 'wheel_elements')
+    const tableCollectionRef = collection(db, 'table_values')
+    // const navigate = useNavigate();
+
+
+    useEffect(() => {
+      console.log("GALLL")
+      getTableData()
+    }, []);
+
+    // Keep track of the user if they are logged in
+    useEffect(() => {
+      const unsubscribe = auth.onAuthStateChanged(userAuth => {
+      if (userAuth) {
+        const user = {
+          uid: userAuth.uid,
+          email: userAuth.email
+        }
+        console.log('userAuth', userAuth)
+        setUser(user)
+      } else {
+        setUser(null)
+      }
+      })
+      return unsubscribe
+    }, [])
+
+    const getTableData = async() => {
+      let data = await getDocs(tableCollectionRef);
+      console.log("Table elements")
+      console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+      setTableValues(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+      var wheelArray = constructWheelArray(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+      setWheelElements(wheelArray)
+      console.log("table values")
+      console.log(tableValues)
+    }
+
+    console.log('Checking out user')
+    console.log(user)
+    
+      return (
+        <Router>
+          <html translate="no">
+          <div className="App">
+            <Routes>
+              <Route element={<ProtectedRoute user={user}/>}>
+                <Route path="/" element={<AdminPage user={user} getTableData={getTableData} wheelElements={wheelElements} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef} wheelCollectionRef={wheelCollectionRef}/>}/>
+                <Route path="/emails" element={<EmailPage user={user}></EmailPage>}/>
+                <Route path="/chart" element={<ChartPage user={user}></ChartPage>}/>
+              </Route>
+              <Route element={<PublicRoute user={user}/>}>
+                <Route path="/login" element={<SignInPage user={user}></SignInPage>}/>
+              </Route>
+              <Route path="/spin" element={<SpinPage user={user} wheelElements={wheelElements}/>}/>
+            </Routes>
+          </div>
+          </html>
+        </Router>
+      );
 }
 
-export default App;
+const rootElement = document.getElementById('root');
+ReactDOM.render(<App />, rootElement);
