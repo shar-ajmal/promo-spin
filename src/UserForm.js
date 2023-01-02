@@ -88,7 +88,7 @@ export default function UserForm({userId, wheelElements, selectItem}) {
     }
 
     return (
-        <form onSubmit={handleSubmit} class="user-form">
+        <form onSubmit={handleSubmit} class="user-form input-margin">
             <input placeholder='email' name="user_email" value={sendFields['user_email']} onChange={handle_change}/><br/>
             <input placeholder='phone number' name="user_phone" value={sendFields['user_phone']} onChange={handle_change}/><br/>
             <button class="submit-button button-green" type="submit">Spin</button>

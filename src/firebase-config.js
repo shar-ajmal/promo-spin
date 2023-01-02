@@ -46,7 +46,7 @@ const googleProvider = new GoogleAuthProvider();
 
 const generateQRCode = (userId) => {
   console.log("In gen qr code")
-  const urlString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://localhost:3000/spin/' + userId +'&size=100x100&format=png'
+  const urlString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://promo-spin.web.app/spin/' + userId +'&size=100x100&format=png'
   console.log(urlString)
   fetch(urlString)
   .then(response => {

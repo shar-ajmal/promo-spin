@@ -178,6 +178,17 @@
   .submit-button {
     width:100%;
   }
+
+  .input-margin {
+    margin: 20px;
+  }
+
+  .signin-container {
+    margin: 20px;
+    padding: 20px;
+    border-radius: .25rem;
+    border: black 1px solid;
+  }
 /* 
   button {
     margin: 0px 5px 0px 5px;

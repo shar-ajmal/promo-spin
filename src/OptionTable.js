@@ -88,7 +88,7 @@ export default function OptionTable({ user, wheelElements, setWheelElements, tab
             <h1>Entry Table</h1>
             {console.log("HELLO")}
             {console.log(tableValues)}
-            <table class="table" id="table">
+            <table class="table input-margin" id="table">
                 {console.log("gae3")}
                 <tr>
                     <th>Entry Name</th>

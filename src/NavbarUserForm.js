@@ -1,10 +1,10 @@
 import './navbar.css'
 
-export default function NavbarUserForm() {
+export default function NavbarUserForm({busName}) {
 
     return(
         <div class="topnav">
-            <a>Coughlin’s Law</a>
+            <a>{busName}</a>
         </div>
     )
 }

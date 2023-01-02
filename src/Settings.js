@@ -54,12 +54,17 @@ export default function Settings({user}) {
     return (
         <div>
             <Navbar user={user}></Navbar>
-            <input placeholder="Enter Restaurant Name" value={busName} onChange={handleChange}/>
+            <h3>Business Name</h3>
+            <div class="input-margin">
+                <input placeholder="Enter Restaurant Name" value={busName} onChange={handleChange}/>
+            </div>
             <button class="button-green" onClick={onSave}>Save</button>
-            <h1>QR Code</h1>
-            <p>This code will link to the user form. Download it and have clients scan it to spin a prize.</p>
-            <button class="button-blue" onClick={downloadQRCode}>Download</button>
-            <div><img src={qrCode}/></div>
+            <div class="input-margin">
+                <h1>QR Code</h1>
+                <p>This code will link to the user form. Download it and have clients scan it to spin a prize.</p>
+                <button class="button-blue" onClick={downloadQRCode}>Download</button>
+                <div class="input-margin"><img src={qrCode}/></div>
+            </div>
         </div>
 
     )
