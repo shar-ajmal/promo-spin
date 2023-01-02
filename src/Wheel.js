@@ -52,6 +52,8 @@ export default class Wheel extends React.Component {
     };
     const spinning = selectedItem !== null ? 'spinning' : '';
 
+    // console.log("in wheel.js")
+    // console.log(userId)
     return (
       <div>
         <div className="wheel-container">
@@ -63,7 +65,7 @@ export default class Wheel extends React.Component {
             ))}
           </div>
         </div>
-        <UserForm selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
+        <UserForm userId={this.props.userId} selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
       </div>
     );
   }

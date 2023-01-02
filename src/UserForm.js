@@ -5,12 +5,10 @@ import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/
 import emailjs from '@emailjs/browser';
 import NavbarUserForm from './NavbarUserForm'
 
-export default function UserForm({selectedItem, wheelElements, selectItem}) {
-    // const [emailInput, setEmailInput] = useState('')
-    // const [phoneInput, setPhoneInput] = useState('')
-    const emailCollection = collection(db, 'emails')
-    const phoneCollection = collection(db, 'phone_numbers')
+export default function UserForm({userId, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
+    console.log("in user form")
+    console.log(userId)
 
     const [sendFields, setSendFields] = useState({
         'user_email': '',
@@ -35,7 +33,7 @@ export default function UserForm({selectedItem, wheelElements, selectItem}) {
     const handleSubmit = async(e) => {
         e.preventDefault();
         console.log(sendFields)
-        const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['user_email'])));
+        const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['user_email']), where("user_id", "==", userId)));
 
         if (qSnap.size) {
             alert("email alredy exists!")
@@ -52,7 +50,7 @@ export default function UserForm({selectedItem, wheelElements, selectItem}) {
         setSendFields({...sendFields, item_name: selectedItem})
 
         if (sendFields['user_email'] != "") {
-            addDoc(collectedInfoRef,  {'email': sendFields['user_email'], 'timestamp': Date.now()})
+            addDoc(collectedInfoRef,  {'email': sendFields['user_email'], 'timestamp': Date.now(), 'user_id': userId})
         }
 
         // if (sendFields['user_email'] != "") {

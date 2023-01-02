@@ -5,7 +5,7 @@ import { read, utils, writeFileXLSX } from 'xlsx';
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 
-export default function EmailPage({}) {
+export default function EmailPage({user}) {
     const [emailList, setEmailList] = useState([])
     const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ export default function EmailPage({}) {
 
     return (
         <div>
-            <Navbar></Navbar>
+            <Navbar user={user}></Navbar>
             <button onClick={exportData}>Export</button>
             <table class="email-table">
                 <tr>

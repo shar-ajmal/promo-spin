@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 import './styles.css';
 import { async } from '@firebase/util';
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, query, where } from 'firebase/firestore'
 import { getAllByRole } from '@testing-library/react';
 import { auth } from './firebase-config';
 
@@ -23,23 +23,24 @@ import { constructWheelArray } from './function'
 import EmailPage from './EmailPage';
 import ChartPage from './ChartPage';
 import SignInPage from './SignIn'; 
+import Settings from './Settings';
 
 import './styles.css'
 
 export default function App () {
-    const [wheelElements, setWheelElements] = useState([]);
-    const [tableValues, setTableValues] = useState([]);
-    const [user, setUser] = useState([]);
+    // const [wheelElements, setWheelElements] = useState([]);
+    // const [tableValues, setTableValues] = useState([]);
+    const [user, setUser] = useState();
     
-    const wheelCollectionRef = collection(db, 'wheel_elements')
-    const tableCollectionRef = collection(db, 'table_values')
+    // const wheelCollectionRef = collection(db, 'wheel_elements')
+    // const tableCollectionRef = collection(db, 'table_values')
     // const navigate = useNavigate();
 
 
-    useEffect(() => {
-      console.log("GALLL")
-      getTableData()
-    }, []);
+    // useEffect(() => {
+    //   console.log("GALLL")
+    //   getTableData()
+    // }, []);
 
     // Keep track of the user if they are logged in
     useEffect(() => {
@@ -58,16 +59,16 @@ export default function App () {
       return unsubscribe
     }, [])
 
-    const getTableData = async() => {
-      let data = await getDocs(tableCollectionRef);
-      console.log("Table elements")
-      console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-      setTableValues(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-      var wheelArray = constructWheelArray(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-      setWheelElements(wheelArray)
-      console.log("table values")
-      console.log(tableValues)
-    }
+    // const getTableData = async() => {
+    //   let data = await getDocs(query(tableCollectionRef, where("user_id", "==", user.uid)));
+    //   console.log("Table elements")
+    //   console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+    //   setTableValues(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+    //   var wheelArray = constructWheelArray(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+    //   setWheelElements(wheelArray)
+    //   console.log("table values")
+    //   console.log(tableValues)
+    // }
 
     console.log('Checking out user')
     console.log(user)
@@ -78,14 +79,15 @@ export default function App () {
           <div className="App">
             <Routes>
               <Route element={<ProtectedRoute user={user}/>}>
-                <Route path="/" element={<AdminPage user={user} getTableData={getTableData} wheelElements={wheelElements} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef} wheelCollectionRef={wheelCollectionRef}/>}/>
+                <Route path="/" element={<AdminPage user={user}/>}/>
                 <Route path="/emails" element={<EmailPage user={user}></EmailPage>}/>
                 <Route path="/chart" element={<ChartPage user={user}></ChartPage>}/>
+                <Route path="/info" element={<Settings user={user}></Settings>}/>
               </Route>
               <Route element={<PublicRoute user={user}/>}>
                 <Route path="/login" element={<SignInPage user={user}></SignInPage>}/>
               </Route>
-              <Route path="/spin" element={<SpinPage user={user} wheelElements={wheelElements}/>}/>
+              <Route path="/spin/:userId" element={<SpinPage user={user}/>}/>
             </Routes>
           </div>
           </html>

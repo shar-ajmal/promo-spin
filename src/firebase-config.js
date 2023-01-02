@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 
 import {
   getFirestore,
@@ -30,11 +31,38 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const storage = getStorage(app);
+
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 const googleProvider = new GoogleAuthProvider();
+
+// function uploaQRCode(file, userId) {
+//   const storageRef = ref(storage, `/QRCode/${userId}`)
+//   uploadBytes(storageRef, file).then(() => {console.log("img uploaded")});
+// }
+
+const generateQRCode = (userId) => {
+  console.log("In gen qr code")
+  const urlString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://localhost:3000/spin/' + userId +'&size=100x100&format=png'
+  console.log(urlString)
+  fetch(urlString)
+  .then(response => {
+      console.log(response)
+      console.log(response.url)
+      // console.log(qrCodeImg)
+      console.log("qr code gen")
+      addDoc(collection(db, "qrCodes"), {
+        user_id: userId,
+        urlRef: urlString
+      });
+      // uploaQRCode(response.url, userId)
+      // qrCodeImg.setAttribute('src',response.url)
+  })
+}
+
 export const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
@@ -49,6 +77,7 @@ export const signInWithGoogle = async () => {
         email: user.email,
       });
     }
+    generateQRCode(user.uid)
   } catch (err) {
     console.error(err);
     alert(err.message);

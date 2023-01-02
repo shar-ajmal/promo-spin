@@ -8,7 +8,7 @@ import moment from 'moment'
 import _ from 'lodash';
 import Navbar from './Navbar';
 
-export default function ChartPage({}) {
+export default function ChartPage({user}) {
     const collectedInfoRef = collection(db, 'collected_info')
     const [chartData, setChartData] = useState([])
     const [timePeriod, setTimePeriod] = useState([])
@@ -55,7 +55,7 @@ export default function ChartPage({}) {
 
     return (
         <div>
-            <Navbar></Navbar>
+            <Navbar user={user}></Navbar>
             <ResponsiveContainer width = '95%' height = {500} >
                 <ScatterChart>
                     <XAxis
