@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import {db} from './firebase-config'
-import { collection, getDocs } from 'firebase/firestore'
 import { read, utils, writeFileXLSX } from 'xlsx';
 import { useNavigate } from "react-router-dom";
+import { collection, getDocs, query, where } from 'firebase/firestore'
+
 import Navbar from "./Navbar";
 
 export default function EmailPage({user}) {
@@ -17,7 +18,7 @@ export default function EmailPage({user}) {
         const collectedInfoRef = collection(db, 'collected_info');
         
         const getEmailData = async() => {
-            let data = await getDocs(collectedInfoRef)
+            let data = await getDocs(query(collectedInfoRef, where("user_id", "==", user.uid)));
             setEmailList(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
             // console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
         }

@@ -180,6 +180,9 @@
   }
 
   .input-margin {
+    padding: 0px 20px;
+  }
+  .margin-20 {
     margin: 20px;
   }
 
@@ -188,6 +191,10 @@
     padding: 20px;
     border-radius: .25rem;
     border: black 1px solid;
+  }
+
+  .bus-name {
+    padding: 0px 20px 20px 0px;
   }
 /* 
   button {

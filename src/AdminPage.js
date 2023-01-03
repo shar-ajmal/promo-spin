@@ -39,7 +39,11 @@ export default function AdminPage({user}) {
 
     const getBusName = async() => {
         let data = await getDocs(query(busNameCollectionRef, where("user_id", "==", user.uid)));
-        if (data.docs.map((doc) => ({...doc.data()}))[0]['name'] === "") {
+        console.log("in bus")
+        // console.log(getBusName)
+        console.log("printin yutoij")
+        console.log(data)
+        if (data === undefined || data.docs.map((doc) => ({...doc.data()}))[0]['name'] === "") {
             setBusName(<h3>Please add your buiness name via the info tab.</h3>)
         }
         else {
@@ -52,7 +56,7 @@ export default function AdminPage({user}) {
     return (
         <div>
             <Navbar user={user}></Navbar>
-            <div>{busName}</div>
+            <div className='bus-name'>{busName}</div>
             <SpinWheel wheelElements={wheelElements}/>
             <OptionTable user={user} wheelElements={wheelElements} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/>
         </div>

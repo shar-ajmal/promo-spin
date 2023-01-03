@@ -39,7 +39,10 @@ export default function SpinPage() {
 
     const getBusData = async() => {
         let data = await getDocs(query(busNameCollectionRef, where("user_id", "==", userId)));
-        setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['name'])
+        if (data != undefined) {
+            // console.log(data.docs.map((doc) => ({...doc.data()}))[0])
+            setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['name'])
+        }
     }
     
     function selectItemIndex() {

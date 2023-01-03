@@ -1,7 +1,7 @@
 import { LineChart, Line, CartesianGrid, XAxis, YAxis,ResponsiveContainer,ScatterChart, Scatter  } from 'recharts';
 import { useState, useEffect } from "react";
 import {db} from './firebase-config'
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, getDocs, query, where} from 'firebase/firestore'
 import { read, utils, writeFileXLSX } from 'xlsx';
 import { useNavigate } from "react-router-dom";
 import moment from 'moment'
@@ -21,7 +21,7 @@ export default function ChartPage({user}) {
 
     useEffect(() => {
         const getInfoData = async() => {
-            let data = await getDocs(collectedInfoRef)
+            let data = await getDocs(query(collectedInfoRef, where("user_id", "==", user.uid)))
             let mappedData = data.docs.map((doc) => ({...doc.data(), id:doc.id}))
             // setChartData(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
             console.log("MAPPING DATAs")

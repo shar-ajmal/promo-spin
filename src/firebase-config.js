@@ -76,8 +76,14 @@ export const signInWithGoogle = async () => {
         authProvider: "google",
         email: user.email,
       });
+
+      await addDoc(collection(db, "busName"), {
+        user_id: user.uid,
+        name: "",
+      });
+
+      generateQRCode(user.uid)
     }
-    generateQRCode(user.uid)
   } catch (err) {
     console.error(err);
     alert(err.message);

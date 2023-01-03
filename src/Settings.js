@@ -7,8 +7,11 @@ import {saveAs} from "file-saver";
 export default function Settings({user}) {
     const [busName, setBusName] = useState("");
     const [qrCode, setQrCode] = useState();
+    const [numInfo, setNumInfo] = useState();
     const qrCodeCollectionRef = collection(db, 'qrCodes')
     const busNameCollectionRef = collection(db, 'busName')
+    const infoCollectionRef = collection(db, 'collected_info')
+
 
     function handleChange(e) {
         setBusName(e.target.value)
@@ -45,12 +48,26 @@ export default function Settings({user}) {
 
         getQRCode()
         getBusName()
+        getCollectedInfo()
     }, [])
 
     const getBusName = async() => {
+        console.log("inside bu nme")
         let data = await getDocs(query(busNameCollectionRef, where("user_id", "==", user.uid)));
-        setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['name'])
+        console.log(data.docs.map((doc) => ({...doc.data()}))[0])
+        if (data != undefined) {
+            setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['name'])
+        }
     }
+
+    const getCollectedInfo = async() => {
+        console.log("in info num")
+        let data = await getDocs(query(infoCollectionRef, where("user_id", "==", user.uid)));
+        let docs = data.docs.map((doc) => ({...doc.data()}))
+        setNumInfo(docs.length)
+    }
+
+
     return (
         <div>
             <Navbar user={user}></Navbar>
@@ -59,11 +76,12 @@ export default function Settings({user}) {
                 <input placeholder="Enter Restaurant Name" value={busName} onChange={handleChange}/>
             </div>
             <button class="button-green" onClick={onSave}>Save</button>
+            <h5>Emails Collected: {numInfo}</h5>
             <div class="input-margin">
                 <h1>QR Code</h1>
                 <p>This code will link to the user form. Download it and have clients scan it to spin a prize.</p>
                 <button class="button-blue" onClick={downloadQRCode}>Download</button>
-                <div class="input-margin"><img src={qrCode}/></div>
+                <div class="margin-20"><img src={qrCode}/></div>
             </div>
         </div>
 
