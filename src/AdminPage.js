@@ -6,10 +6,15 @@ import { useEffect, useInsertionEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { constructWheelArray } from './function';
 import { db } from './firebase-config';
+import * as Modal from 'react-modal';
+// import {OnboardingModal} from 'onboarding-react'
+import OnboardingModal from './Onboarding';
 
 export default function AdminPage({user}) {
     const [tableValues, setTableValues] = useState([]);
     const [wheelElements, setWheelElements] = useState([]);
+    const [displayOnboarding, setDisplayOnboarding] = useState([true]);
+
     const [busName, setBusName] = useState()
 
     const tableCollectionRef = collection(db, 'table_values')
@@ -56,6 +61,11 @@ export default function AdminPage({user}) {
     return (
         <div>
             <Navbar user={user}></Navbar>
+            {displayOnboarding? 
+            <OnboardingModal setDisplayOnboarding={setDisplayOnboarding}></OnboardingModal>
+            :
+            <div></div>
+          }
             <div className='bus-name'>{busName}</div>
             <SpinWheel wheelElements={wheelElements}/>
             <OptionTable user={user} wheelElements={wheelElements} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/>

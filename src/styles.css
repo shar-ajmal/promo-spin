@@ -1,18 +1,9 @@
-/* body {
-    background: linear-gradient(to left,rgb(138, 52, 52),rgb(97, 97, 199));
-  } */
-  
+
   .App {
     font-family: sans-serif;
     text-align: center;
+    padding-bottom: 75px;
   }
-  
-  /* button {
-    background: none;
-    border: 1px solid black;
-    font-size: 20px;
-    border-radius:5px;
-  } */
   
 .button-blue {
   cursor: pointer;
@@ -196,6 +187,103 @@
   .bus-name {
     padding: 0px 20px 20px 0px;
   }
+
+  .center {
+    position: absolute;
+    width: 300px;
+    max-height: 600px;
+    padding: 0px 10px;
+    border-radius: 10px;
+    top: 50%;
+    left: 50%;
+    margin-left: -160px;
+    margin-top: -300px; 
+    background: white;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+  }
+
+  .onboarding-h5 {
+    margin: 10px
+  }
+
+  .onboarding-p {
+    font-size: 14px;
+    text-align: left;
+    margin: 0px;
+  }
+
+  .onboarding-button {
+    cursor: pointer;
+    outline: 0;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 1rem;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    color: #0d6efd;
+    border-color: #0d6efd;
+    margin: 0px 5px 0px 5px;
+    max-width: 75px;
+  
+  }
+  .onboarding-button:hover {
+      color: #fff;
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+  }
+
+  .onboarding-button-container {
+    margin:10px
+  }
+
+  .onboarding-img-container {
+    max-width: 200px;
+    margin: auto;
+  }
+
+  .onboarding-img {
+    width: 100%;
+  }
+
+  .bus-container {
+    max-width: 600px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+  }
+
+  .bus-container-button{
+      height: 40px;
+      margin-top: 8px;
+      cursor: pointer;
+      outline: 0;
+      display: inline-block;
+      font-weight: 400;
+      line-height: 1.5;
+      text-align: center;
+      background-color: transparent;
+      border: 1px solid transparent;
+      padding: 6px 12px;
+      font-size: 1rem;
+      border-radius: .25rem;
+      transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      color: #61c73c;
+      border-color: #61c73c;
+  }
+
+  .bus-container-button:hover {
+    color: #fff;
+    background-color: #61c73c;
+    border-color: #61c73c;
+}
+
 /* 
   button {
     margin: 0px 5px 0px 5px;

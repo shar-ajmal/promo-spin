@@ -72,10 +72,12 @@ export default function Settings({user}) {
         <div>
             <Navbar user={user}></Navbar>
             <h3>Business Name</h3>
-            <div class="input-margin">
-                <input placeholder="Enter Restaurant Name" value={busName} onChange={handleChange}/>
+            <div className="bus-container">
+                <div class="input-margin">
+                    <input placeholder="Enter Restaurant Name" value={busName} onChange={handleChange}/>
+                </div>
+                <button class="bus-container-button" onClick={onSave}>Save</button>
             </div>
-            <button class="button-green" onClick={onSave}>Save</button>
             <h5>Emails Collected: {numInfo}</h5>
             <div class="input-margin">
                 <h1>QR Code</h1>
