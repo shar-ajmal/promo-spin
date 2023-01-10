@@ -4,7 +4,7 @@ export default function NavbarUserForm({busName}) {
 
     return(
         <div class="topnav">
-            <a>{busName}</a>
+            <div className='bus-title'>{busName}</div>
         </div>
     )
 }

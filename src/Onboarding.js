@@ -1,11 +1,16 @@
 import React from 'react';
 import { useState } from 'react';
-const OnboardingModal = ({ setDisplayOnboarding }) => {
+import { db } from './firebase-config';
+import { collection, getDocs, query, where, doc, updateDoc } from 'firebase/firestore'
+
+const OnboardingModal = ({ setDisplayOnboarding, user }) => {
   const handleNext = () => {
     setStep(prevStep => prevStep + 1);
   };
 
   const [currentStep, setStep] = useState(1);
+  const userCollectionRef = collection(db, 'users')
+
 
   let content;
   if (currentStep === 1) {
@@ -102,7 +107,15 @@ const OnboardingModal = ({ setDisplayOnboarding }) => {
 
   if (currentStep === 7) {
     setDisplayOnboarding(false)
+      getDocs(query(userCollectionRef, where("user_id", "==", user.uid))).then((res) => {
+        console.log("hello world!")
+        console.log(res.docs[0].id)
+        const docRef = doc(db, "users", res.docs[0].id);
+        console.log(docRef)
+        updateDoc(docRef, {'show_onboard_flow': false})
+    })
   }
+
 
   return (
     <div>

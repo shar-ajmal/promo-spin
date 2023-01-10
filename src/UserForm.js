@@ -32,6 +32,10 @@ export default function UserForm({userId, wheelElements, selectItem}) {
     const handleSubmit = async(e) => {
         e.preventDefault();
         console.log(sendFields)
+        if (sendFields['user_email'] === "") {
+            alert("Please Enter Email Address")
+            return
+        }
         const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['user_email']), where("user_id", "==", userId)));
 
         if (qSnap.size) {

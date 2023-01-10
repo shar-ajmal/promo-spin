@@ -13,17 +13,18 @@ import OnboardingModal from './Onboarding';
 export default function AdminPage({user}) {
     const [tableValues, setTableValues] = useState([]);
     const [wheelElements, setWheelElements] = useState([]);
-    const [displayOnboarding, setDisplayOnboarding] = useState([true]);
+    const [displayOnboarding, setDisplayOnboarding] = useState([]);
 
     const [busName, setBusName] = useState()
 
     const tableCollectionRef = collection(db, 'table_values')
-    const busNameCollectionRef = collection(db, 'busName')
+    const userCollectionRef = collection(db, 'users')
 
     useEffect(() => {
         console.log("Printing user info in admin page")
         console.log(user)
         console.log("done printing user info")
+        // setDisplayOnboarding(false)
         if (user != undefined) {
             getTableData()
             getBusName()
@@ -43,26 +44,25 @@ export default function AdminPage({user}) {
     }
 
     const getBusName = async() => {
-        let data = await getDocs(query(busNameCollectionRef, where("user_id", "==", user.uid)));
+        let data = await getDocs(query(userCollectionRef, where("user_id", "==", user.uid)));
         console.log("in bus")
         // console.log(getBusName)
-        console.log("printin yutoij")
-        console.log(data)
-        if (data === undefined || data.docs.map((doc) => ({...doc.data()}))[0]['name'] === "") {
+        var snap = data.docs.map((doc) => ({...doc.data()}))[0]
+        setDisplayOnboarding(snap['show_onboard_flow'])
+        if (snap['business_name'] === "") {
             setBusName(<h3>Please add your buiness name via the info tab.</h3>)
         }
         else {
-            setBusName(<h1>{data.docs.map((doc) => ({...doc.data()}))[0]['name']}</h1>)
+            setBusName(<h1>{snap['business_name']}</h1>)
         }
     }
 
-    var message = <div></div>
 
     return (
         <div>
             <Navbar user={user}></Navbar>
             {displayOnboarding? 
-            <OnboardingModal setDisplayOnboarding={setDisplayOnboarding}></OnboardingModal>
+            <OnboardingModal setDisplayOnboarding={setDisplayOnboarding} user={user}></OnboardingModal>
             :
             <div></div>
           }

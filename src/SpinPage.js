@@ -13,7 +13,8 @@ export default function SpinPage() {
     const [wheelElements, setWheelElements] = useState()
     const [busName, setBusName] = useState()
 
-    const busNameCollectionRef = collection(db, 'busName')
+    // const busNameCollectionRef = collection(db, 'busName')
+    const userCollectionRef = collection(db, 'users')
     const tableCollectionRef = collection(db, 'table_values')
 
     const params = useParams()
@@ -38,10 +39,10 @@ export default function SpinPage() {
     }
 
     const getBusData = async() => {
-        let data = await getDocs(query(busNameCollectionRef, where("user_id", "==", userId)));
+        let data = await getDocs(query(userCollectionRef, where("user_id", "==", userId)));
         if (data != undefined) {
             // console.log(data.docs.map((doc) => ({...doc.data()}))[0])
-            setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['name'])
+            setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['business_name'])
         }
     }
     

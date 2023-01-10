@@ -63,6 +63,29 @@ const generateQRCode = (userId) => {
   })
 }
 
+const generateUser = (user) => {
+  console.log("In gen qr code")
+  const urlString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://promo-spin.web.app/spin/' + user.uid +'&size=100x100&format=png'
+  console.log(urlString)
+  fetch(urlString)
+  .then(response => {
+      console.log(response)
+      console.log(response.url)
+      // console.log(qrCodeImg)
+      console.log("qr code gen")
+      addDoc(collection(db, "users"), {
+        user_id: user.uid,
+        urlRef: urlString,
+        name: user.displayName,
+        authProvider: "google",
+        email: user.email,
+        show_onboard_flow: true,
+        business_name: ""
+      });
+      // uploaQRCode(response.url, userId)
+      // qrCodeImg.setAttribute('src',response.url)
+  })
+}
 export const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
@@ -70,19 +93,20 @@ export const signInWithGoogle = async () => {
     const q = query(collection(db, "users"), where("uid", "==", user.uid));
     const docs = await getDocs(q);
     if (docs.docs.length === 0) {
-      await addDoc(collection(db, "users"), {
-        uid: user.uid,
-        name: user.displayName,
-        authProvider: "google",
-        email: user.email,
-      });
+      generateUser(user)
+      // await addDoc(collection(db, "users"), {
+      //   uid: user.uid,
+      //   name: user.displayName,
+      //   authProvider: "google",
+      //   email: user.email,
+      // });
 
-      await addDoc(collection(db, "busName"), {
-        user_id: user.uid,
-        name: "",
-      });
+      // await addDoc(collection(db, "busName"), {
+      //   user_id: user.uid,
+      //   name: "",
+      // });
 
-      generateQRCode(user.uid)
+      // generateQRCode(user.uid)
     }
   } catch (err) {
     console.error(err);

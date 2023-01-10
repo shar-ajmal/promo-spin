@@ -8,9 +8,11 @@ export default function Settings({user}) {
     const [busName, setBusName] = useState("");
     const [qrCode, setQrCode] = useState();
     const [numInfo, setNumInfo] = useState();
-    const qrCodeCollectionRef = collection(db, 'qrCodes')
-    const busNameCollectionRef = collection(db, 'busName')
+    // const qrCodeCollectionRef = collection(db, 'qrCodes')
+    // const busNameCollectionRef = collection(db, 'busName')
     const infoCollectionRef = collection(db, 'collected_info')
+    const userCollectionRef = collection(db, 'users')
+
 
 
     function handleChange(e) {
@@ -19,18 +21,21 @@ export default function Settings({user}) {
 
     function onSave() {
         console.log("inside onsve")
-        getDocs(query(busNameCollectionRef, where("user_id", "==", user.uid))).then((res) => {
+        getDocs(query(userCollectionRef, where("user_id", "==", user.uid))).then((res) => {
             console.log("hello world!")
             console.log(res.docs[0].id)
             console.log(res.snapshot)
-            if (res.docs.length === 0) {
-                console.log("adding name")
-                addDoc(busNameCollectionRef, {'user_id': user.uid, 'name': busName})
-            }
-            else {
-                const docRef = doc(db, "busName", res.docs[0].id);
-                updateDoc(docRef, {'name': busName})
-            }
+            const docRef = doc(db, "users", res.docs[0].id);
+            console.log(docRef)
+            updateDoc(docRef, {'business_name': busName})
+            // if (res.docs.length === 0) {
+            //     console.log("adding name")
+            //     addDoc(busNameCollectionRef, {'user_id': user.uid, 'name': busName})
+            // }
+            // else {
+            //     const docRef = doc(db, "busName", res.docs[0].id);
+            //     updateDoc(docRef, {'name': busName})
+            // }
         })
     }
 
@@ -38,27 +43,38 @@ export default function Settings({user}) {
         saveAs(qrCode, "Spin-Wheel-QRCode");
     }
 
-    useEffect(() => {
-        const getQRCode = async() => {
-            console.log("inside qr code use effect")
-            let data = await getDocs(query(qrCodeCollectionRef, where("user_id", "==", user.uid)));
-            setQrCode(data.docs.map((doc) => ({...doc.data()}))[0]['urlRef'])
-            console.log('exiting use effect')
-        }
 
-        getQRCode()
-        getBusName()
+    const userInfo = async() => {
+        console.log("inside qr code use effect")
+        let data = await getDocs(query(userCollectionRef, where("user_id", "==", user.uid)));
+        let snap = data.docs.map((doc) => ({...doc.data()}))[0]
+        setQrCode(snap['urlRef'])
+        setBusName(snap['business_name'])
+        console.log('exiting use effect')
+    }
+
+    useEffect(() => {
+        // const getQRCode = async() => {
+        //     console.log("inside qr code use effect")
+        //     let data = await getDocs(query(qrCodeCollectionRef, where("user_id", "==", user.uid)));
+        //     setQrCode(data.docs.map((doc) => ({...doc.data()}))[0]['urlRef'])
+        //     console.log('exiting use effect')
+        // }
+
+        // getQRCode()
+        // getBusName()
+        userInfo()
         getCollectedInfo()
     }, [])
 
-    const getBusName = async() => {
-        console.log("inside bu nme")
-        let data = await getDocs(query(busNameCollectionRef, where("user_id", "==", user.uid)));
-        console.log(data.docs.map((doc) => ({...doc.data()}))[0])
-        if (data != undefined) {
-            setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['name'])
-        }
-    }
+    // const getBusName = async() => {
+    //     console.log("inside bu nme")
+    //     let data = await getDocs(query(busNameCollectionRef, where("user_id", "==", user.uid)));
+    //     console.log(data.docs.map((doc) => ({...doc.data()}))[0])
+    //     if (data != undefined) {
+    //         setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['name'])
+    //     }
+    // }
 
     const getCollectedInfo = async() => {
         console.log("in info num")
