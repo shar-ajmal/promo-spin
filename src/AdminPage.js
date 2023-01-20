@@ -6,6 +6,7 @@ import { useEffect, useInsertionEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { constructWheelArray } from './function';
 import { db } from './firebase-config';
+import RemainingProb from './RemainingProb';
 import * as Modal from 'react-modal';
 // import {OnboardingModal} from 'onboarding-react'
 import OnboardingModal from './Onboarding';

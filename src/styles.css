@@ -300,6 +300,18 @@
   margin: auto;
   padding: 0px 5px;
 }
+
+.total-prob {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+  align-items: center;
+}
+
+.total-prob-el {
+  margin: 0px 5px;
+  font-weight: bold;
+}
 /* 
   button {
     margin: 0px 5px 0px 5px;

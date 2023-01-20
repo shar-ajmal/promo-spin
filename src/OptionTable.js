@@ -13,6 +13,7 @@ import { getAllByRole } from '@testing-library/react';
 import { useState, useEffect } from 'react';
 import InputFields from './InputField';
 import { constructWheelArray } from './function';
+import RemainingProb from './RemainingProb';
 
 export default function OptionTable({ user, wheelElements, setWheelElements, tableValues, setTableValues, tableCollectionRef}) {
     console.log("gae")
@@ -98,6 +99,7 @@ export default function OptionTable({ user, wheelElements, setWheelElements, tab
             <h1>Entry Table</h1>
             {console.log("HELLO")}
             {console.log(tableValues)}
+            <RemainingProb tableValues={tableValues}></RemainingProb>
             <table class="table input-margin" id="table">
                 {console.log("gae3")}
                 <tr>
