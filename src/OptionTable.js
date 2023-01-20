@@ -26,6 +26,16 @@ export default function OptionTable({ user, wheelElements, setWheelElements, tab
                 alert("No fields can be empty!")
                 return false
             }
+            console.log("testing prob")
+            console.log(parseInt(tableValues[i]['probability']))
+            console.log(parseInt(tableValues[i]['probability']) % 10)
+            let probValue = parseInt(tableValues[i]['probability'])
+
+            if(probValue % 10 != 0 && probValue % 25 != 0) {
+                alert("Probabilities need to be divisible by 10 or 25!")
+                return false
+            }
+
             console.log(tableValues[i])
             console.log(tableValues[i]['probability'])
             probSum += parseInt(tableValues[i]['probability'])

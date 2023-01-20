@@ -291,6 +291,15 @@
   margin: 15px;
 }
 
+.prob-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.prob-percent {
+  margin: auto;
+  padding: 0px 5px;
+}
 /* 
   button {
     margin: 0px 5px 0px 5px;

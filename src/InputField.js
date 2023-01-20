@@ -66,7 +66,7 @@ export default function InputFields({fuckhello,tableValues, setTableValues, id, 
     return (
         <>
             <td><input value={fieldName} onChange={changeName}/></td>
-            <td><input value={fieldProbability} onChange={changeProbability}/></td>
+            <td className='prob-row'><input value={fieldProbability} onChange={changeProbability} type="number" pattern="^-?[0-9]\d*\.?\d*$"/> <div className='prob-percent'>%</div> </td>
             <td><button class="button-red" onClick={deleteEntry}>Delete</button></td>
         </>
     )

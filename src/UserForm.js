@@ -7,12 +7,14 @@ import NavbarUserForm from './NavbarUserForm'
 
 export default function UserForm({userId, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
+    const userCollectionRef = collection(db, 'users')
+
     console.log("in user form")
     console.log(userId)
 
     const [sendFields, setSendFields] = useState({
         'user_email': '',
-        'restaurant_name': 'Coughlins Law',
+        'restaurant_name': '',
         'item_name': '',
     })
     const form = useRef();
@@ -28,6 +30,16 @@ export default function UserForm({userId, wheelElements, selectItem}) {
         console.log(sendFields)
         sendEmail()
     }, [sendFields['item_name']])
+
+    useEffect(() => {
+        const getBusName = async() => {
+            let data = await getDocs(query(userCollectionRef, where("user_id", "==", userId)));
+            let snap = data.docs.map((doc) => ({...doc.data()}))[0]
+            setSendFields({...sendFields, restaurant_name: snap['business_name']})
+        }
+
+        getBusName()
+    }, [])
 
     const handleSubmit = async(e) => {
         e.preventDefault();
