@@ -42,6 +42,7 @@ export default function ChartPage({user}) {
         let prizeDict = {}
 
         for (var i=0; i<data.length; i++) {
+            if (data[i]['item_name'] === undefined || data[i]['item_name'] === "") continue
             if (!(data[i]['item_name'] in prizeDict)) {
                 prizeDict[data[i]['item_name']] = 1
             }
