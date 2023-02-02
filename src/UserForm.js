@@ -65,7 +65,7 @@ export default function UserForm({userId, wheelElements, selectItem}) {
         setSendFields({...sendFields, item_name: selectedItem})
 
         if (sendFields['user_email'] != "") {
-            addDoc(collectedInfoRef,  {'email': sendFields['user_email'], 'timestamp': Date.now(), 'user_id': userId})
+            addDoc(collectedInfoRef,  {'email': sendFields['user_email'], 'timestamp': Date.now(), 'user_id': userId, 'item_name': selectedItem})
         }
 
         // if (sendFields['user_email'] != "") {

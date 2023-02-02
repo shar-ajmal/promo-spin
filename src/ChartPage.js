@@ -11,6 +11,7 @@ import Navbar from './Navbar';
 export default function ChartPage({user}) {
     const collectedInfoRef = collection(db, 'collected_info')
     const [chartData, setChartData] = useState([])
+    const [prizeInfo, setPrizeInfo] = useState([])
     const [timePeriod, setTimePeriod] = useState([])
 
     const navigate = useNavigate();
@@ -27,11 +28,47 @@ export default function ChartPage({user}) {
             console.log("MAPPING DATAs")
             console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
             let groupedData = groupChartData(mappedData)
+            let groupedPrizeData = groupPrizeData(mappedData)
+            setPrizeInfo(groupedPrizeData)
             setChartData(groupedData)
         }
 
         getInfoData()
-    }, [timePeriod])
+    }, [])
+
+    function groupPrizeData(data) {
+        console.log("IN PRIZE FUNCTION")
+        console.log(data)
+        let prizeDict = {}
+
+        for (var i=0; i<data.length; i++) {
+            if (!(data[i]['item_name'] in prizeDict)) {
+                prizeDict[data[i]['item_name']] = 1
+            }
+            else {
+                prizeDict[data[i]['item_name']] += 1
+            }
+        }
+
+        console.log(prizeDict)
+        let prizeArray = []
+
+        for (let key in prizeDict) {
+            prizeArray.push({'prizeName': key, "prizeCount": prizeDict[key]})
+        }
+
+        console.log("printing prize arr")
+        prizeArray.sort(function(a, b) {
+            return parseFloat(a.prizeCount) - parseFloat(b.prizeCount);
+        });
+        console.log(prizeArray)
+
+
+        return prizeArray
+        
+
+
+    }
 
     function groupChartData(data) {
         let groupedResults = _.groupBy(data, (result) => moment.unix(Math.trunc(result['timestamp']/1000)).startOf('day'));
@@ -56,6 +93,26 @@ export default function ChartPage({user}) {
     return (
         <div>
             <Navbar user={user}></Navbar>
+
+            <table>
+                <tr>
+                    <th>Prize Name</th>
+                    <th>Count</th>
+                </tr>
+                {console.log("viewing prize info")}
+                {console.log(prizeInfo)}
+                {prizeInfo.map((element, index) => { return (
+                    <tr>
+                        <td>
+                            {element['prizeName']}
+                        </td>
+                        <td>
+                            {element['prizeCount']}
+                        </td>
+                    </tr>
+                )
+                })}
+            </table>
             <ResponsiveContainer width = '95%' height = {500} >
                 <ScatterChart>
                     <XAxis

@@ -312,6 +312,10 @@
   margin: 0px 5px;
   font-weight: bold;
 }
+
+.small-font {
+  font-size: 12px;
+}
 /* 
   button {
     margin: 0px 5px 0px 5px;

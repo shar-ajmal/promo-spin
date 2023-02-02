@@ -43,11 +43,17 @@ export default function EmailPage({user}) {
                     <th>
                         Email
                     </th>
+                    <th>
+                        Prize
+                    </th>
                 </tr>
                 {emailList.map((element, index) => { return (
                     <tr>
                         <td>
                             {element['email']}
+                        </td>
+                        <td>
+                            {element['item_name']}
                         </td>
                     </tr>
                 )})}

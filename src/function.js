@@ -20,17 +20,67 @@ export function findGCD(arr, n) {
 }
 
 export function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+    let valueDict = {}
+    for (let i=0; i < array.length; i++) {
+        if (array[i] in valueDict) {
+            valueDict[array[i]] += 1;
+        }
+        else {
+            valueDict[array[i]] = 1;
+        }
+    } 
+
+    let valueArr = []
+    for(var key in valueDict) {
+        valueArr.push({'name': key, 'numTimes': valueDict[key]})
     }
+
+    let helixArr = []
+    let valCount = 0
+    console.log("looking at valArr")
+    console.log(valueArr)
+    console.log(valueDict)
+    while (valueArr.length > 0) {
+        console.log('HERE6')
+        console.log(valueArr[valCount])
+        if (valueArr[valCount]['numTimes'] == 0) {
+            console.log("DELETING")
+            console.log(valCount)
+            // console.log(valueArr.splice(valCount,1))
+            valueArr.splice(valCount,1)
+            console.log(valueArr)
+            valueArr.forEach(element => {
+               console.log(element) 
+            });
+            if (valCount > (valueArr.length-1)) {
+                valCount = 0;
+            }
+        }
+        else {
+            helixArr.push(valueArr[valCount]['name'])
+            valueArr[valCount]['numTimes'] -= 1;
+            if (valCount >= (valueArr.length-1)) {
+                valCount = 0;
+            }
+            else {
+                valCount += 1;
+            }
+        }
+    }
+
+    console.log("In shuffle array")
+    console.log(helixArr)
+
+    return helixArr
+    // for (let i = array.length - 1; i > 0; i--) {
+    //     const j = Math.floor(Math.random() * (i + 1));
+    //     [array[i], array[j]] = [array[j], array[i]];
+    // }
 }
 
 export function constructWheelArray(tableArr) {
     console.log("TOP OF FUNCTION")
     console.log(tableArr)
-    // console.log(tableArr)
-    // console.log(tableArr)
     var probArray = []
     var entryArray = []
     
@@ -52,6 +102,5 @@ export function constructWheelArray(tableArr) {
         }
     }
 
-    shuffleArray(allElements)
-    return allElements
+    return shuffleArray(allElements)
   }

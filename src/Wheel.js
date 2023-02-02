@@ -51,6 +51,8 @@ export default class Wheel extends React.Component {
       '--selected-item': selectedItem,
     };
     const spinning = selectedItem !== null ? 'spinning' : '';
+    const smallFont = items.length > 10 ? 'small-font' : '';
+
 
     // console.log("in wheel.js")
     // console.log(userId)
@@ -59,8 +61,8 @@ export default class Wheel extends React.Component {
         <div className="wheel-container">
           <div className={`wheel ${spinning}`} style={wheelVars}>
             {items.map((item, index) => (
-              <div className="wheel-item" key={index} style={{ '--item-nb': index }}>
-                {item}
+            <div className={`wheel-item ${smallFont}`} key={index} style={{ '--item-nb': index }}>
+            {item}
               </div>
             ))}
           </div>

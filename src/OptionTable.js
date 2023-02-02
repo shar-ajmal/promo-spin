@@ -32,8 +32,8 @@ export default function OptionTable({ user, wheelElements, setWheelElements, tab
             console.log(parseInt(tableValues[i]['probability']) % 10)
             let probValue = parseInt(tableValues[i]['probability'])
 
-            if(probValue % 10 != 0 && probValue % 25 != 0) {
-                alert("Probabilities need to be divisible by 10 or 25!")
+            if(probValue % 5 != 0) {
+                alert("Probabilities need to be divisible by 5!")
                 return false
             }
 
