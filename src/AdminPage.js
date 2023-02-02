@@ -16,7 +16,7 @@ export default function AdminPage({user}) {
     const [wheelElements, setWheelElements] = useState([]);
     const [displayOnboarding, setDisplayOnboarding] = useState([]);
 
-    const [busName, setBusName] = useState()
+    const [busName, setBusName] = useState(<h3>Please add your buiness name via the info tab.</h3>)
 
     const tableCollectionRef = collection(db, 'table_values')
     const userCollectionRef = collection(db, 'users')
@@ -50,6 +50,9 @@ export default function AdminPage({user}) {
         // console.log(getBusName)
         var snap = data.docs.map((doc) => ({...doc.data()}))[0]
         setDisplayOnboarding(snap['show_onboard_flow'])
+        console.log("LOGGING IN BUS NAME")
+        console.log(snap)
+        console.log(snap['business_name'])
         if (snap['business_name'] === "") {
             setBusName(<h3>Please add your buiness name via the info tab.</h3>)
         }
