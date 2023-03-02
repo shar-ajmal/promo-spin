@@ -24,6 +24,7 @@ import EmailPage from './EmailPage';
 import ChartPage from './ChartPage';
 import SignInPage from './SignIn'; 
 import Settings from './Settings';
+import GameCustom from './GameCustom';
 
 import './styles.css'
 
@@ -83,6 +84,7 @@ export default function App () {
                 <Route path="/emails" element={<EmailPage user={user}></EmailPage>}/>
                 <Route path="/chart" element={<ChartPage user={user}></ChartPage>}/>
                 <Route path="/info" element={<Settings user={user}></Settings>}/>
+                <Route path="/custom" element={<GameCustom user={user}></GameCustom>}/>
               </Route>
               <Route element={<PublicRoute user={user}/>}>
                 <Route path="/login" element={<SignInPage user={user}></SignInPage>}/>
