@@ -7,6 +7,8 @@ import SpinWheel from "./SpinWheel";
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { constructWheelArray } from './function';
 import { db } from './firebase-config';
+import { useParams } from 'react-router-dom';
+
 
 export default function GameCustom({user}) {
     const [activeTab, setActiveTab] = useState("tab1");
@@ -15,7 +17,13 @@ export default function GameCustom({user}) {
     const [wheelElements, setWheelElements] = useState([]);
     const [gameName, setGameName] = useState()
 
+    const [gameData, setGameData] = useState()
+
     const tableCollectionRef = collection(db, 'table_values')
+    const gamesCollectionRef = collection(db, 'games')
+
+    const params = useParams()
+    const gameId = params.gameId
 
 
     useEffect(() => {
@@ -25,6 +33,7 @@ export default function GameCustom({user}) {
         // setDisplayOnboarding(false)
         if (user != undefined) {
             getTableData()
+            getGameData()
         }
     }, [])
 
@@ -38,6 +47,19 @@ export default function GameCustom({user}) {
         setWheelElements(wheelArray)
         console.log("table values")
         console.log(tableValues)
+    }
+
+    const getGameData = async() => {
+        console.log("Getting game data query params")
+        console.log(user.uid)
+        console.log(gameId)
+        let gameData = await getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where("game_id", "==", gameId)));
+        console.log("getting game data")
+        console.log(gameData.docs.map((doc) => ({...doc.data(), id:doc.id}))[0])
+        setGameData(gameData.docs.map((doc) => ({...doc.data(), id:doc.id}))[0])
+        console.log("printing form wheel data")
+        var wheelArray = constructWheelArray(gameData.docs.map((doc) => doc.data().wheel_fields)[0])
+        setWheelElements(wheelArray)
     }
   
 
@@ -65,11 +87,11 @@ export default function GameCustom({user}) {
       <div className="elements">
         <div class="section1">
             <h3>Game Name</h3>
-            <GameName gameName={gameName} setGameName={setGameName}></GameName>
+            {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>}
         </div>
         <div class="section2">
             <h3>Game Form Fields</h3>
-            <GameFields formFields={formFields} setFormFields={setFormFields}></GameFields>
+            <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields>
         </div>
         <div>
             <h3>Spin Wheel</h3>
@@ -81,11 +103,11 @@ export default function GameCustom({user}) {
             <>
                 <div>
                     <h3>Game Name</h3>
-                    <GameName gameName={gameName} setGameName={setGameName}></GameName>
+                    {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>}
                 </div>
                 <div>
                     <h3>Game Form Fields</h3>
-                    <GameFields formFields={formFields} setFormFields={setFormFields}></GameFields>
+                    <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields>
                 </div>
             </>
         )}

@@ -27,6 +27,7 @@ import Settings from './Settings';
 import GameCustom from './GameCustom';
 
 import './styles.css'
+import GamePage from './GamePage';
 
 export default function App () {
     // const [wheelElements, setWheelElements] = useState([]);
@@ -80,11 +81,13 @@ export default function App () {
           <div className="App">
             <Routes>
               <Route element={<ProtectedRoute user={user}/>}>
-                <Route path="/" element={<AdminPage user={user}/>}/>
+                <Route path="/" element={<GamePage user={user}></GamePage>}/>
+                {/* <Route path="/" element={<AdminPage user={user}/>}/> */}
                 <Route path="/emails" element={<EmailPage user={user}></EmailPage>}/>
                 <Route path="/chart" element={<ChartPage user={user}></ChartPage>}/>
                 <Route path="/info" element={<Settings user={user}></Settings>}/>
                 <Route path="/custom" element={<GameCustom user={user}></GameCustom>}/>
+                <Route path="/game/:gameId" element={<GameCustom user={user}/>}/>
               </Route>
               <Route element={<PublicRoute user={user}/>}>
                 <Route path="/login" element={<SignInPage user={user}></SignInPage>}/>

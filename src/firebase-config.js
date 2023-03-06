@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   getFirestore,
@@ -19,13 +20,13 @@ import  {GoogleAuthProvider,getAuth,signInWithPopup} from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCVYKGhmks7UU_t0ZSqIF7SQvyhmm-CjA4",
-  authDomain: "promo-spin.firebaseapp.com",
-  projectId: "promo-spin",
-  storageBucket: "promo-spin.appspot.com",
-  messagingSenderId: "986158827674",
-  appId: "1:986158827674:web:e3b6f28ca37624740d3723",
-  measurementId: "G-J8GNW6WH0D"
+  apiKey: "AIzaSyDH5E0czNAAbRleyvnKdA_1PhY-PHVz4dY",
+  authDomain: "promo-spin-staging.firebaseapp.com",
+  projectId: "promo-spin-staging",
+  storageBucket: "promo-spin-staging.appspot.com",
+  messagingSenderId: "896961729195",
+  appId: "1:896961729195:web:17cfefab5b58dae5d21dee",
+  measurementId: "G-E485M38X0S"
 };
 
 // Initialize Firebase
@@ -65,7 +66,8 @@ const generateQRCode = (userId) => {
 
 const generateUser = (user) => {
   console.log("In gen qr code")
-  const urlString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://promo-spin.web.app/spin/' + user.uid +'&size=100x100&format=png'
+  const firstGameID = uuidv4()
+  const urlString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://promo-spin.web.app/spin/' + firstGameID +'&size=200x200&format=png'
   console.log(urlString)
   fetch(urlString)
   .then(response => {
@@ -82,6 +84,13 @@ const generateUser = (user) => {
         show_onboard_flow: true,
         business_name: ""
       });
+      // addDoc(collection(db, "games"), {
+      //   user_id: user.uid,
+      //   game_id: firstGameID,
+      //   game_name: '',
+      //   form_fields: [],
+      //   wheel_fields:[]
+      // });
       // uploaQRCode(response.url, userId)
       // qrCodeImg.setAttribute('src',response.url)
   })
