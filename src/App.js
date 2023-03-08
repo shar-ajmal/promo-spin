@@ -86,13 +86,12 @@ export default function App () {
                 <Route path="/emails" element={<EmailPage user={user}></EmailPage>}/>
                 <Route path="/chart" element={<ChartPage user={user}></ChartPage>}/>
                 <Route path="/info" element={<Settings user={user}></Settings>}/>
-                <Route path="/custom" element={<GameCustom user={user}></GameCustom>}/>
                 <Route path="/game/:gameId" element={<GameCustom user={user}/>}/>
               </Route>
               <Route element={<PublicRoute user={user}/>}>
                 <Route path="/login" element={<SignInPage user={user}></SignInPage>}/>
               </Route>
-              <Route path="/spin/:userId" element={<SpinPage user={user}/>}/>
+              <Route path="/spin/:gameId" element={<SpinPage user={user}/>}/>
             </Routes>
           </div>
           </html>

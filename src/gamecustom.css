@@ -26,13 +26,13 @@
   @media (max-width: 768px) {
     .tabs {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
     }
     .tab-section {
       display: block;
     }
   
-    .elements {
+    .desktop-elements {
       display: none;
     }
   }
@@ -45,9 +45,9 @@
       display: none;
     }
   
-    .elements {
+    .desktop-elements {
       display: flex;
-      flex-direction: column;
+      justify-content: space-around;
     }
   }
   

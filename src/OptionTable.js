@@ -8,17 +8,24 @@ import { v4 as uuidv4 } from 'uuid';
 import './styles.css';
 import './table.css'
 import { async } from '@firebase/util';
-import { collection, getDocs, doc, deleteDoc, addDoc, query, where} from 'firebase/firestore'
+import { collection, getDocs, updateDoc, doc, deleteDoc, addDoc, query, where} from 'firebase/firestore'
 import { getAllByRole } from '@testing-library/react';
 import { useState, useEffect } from 'react';
 import InputFields from './InputField';
 import { constructWheelArray } from './function';
 import RemainingProb from './RemainingProb';
 
-export default function OptionTable({ user, wheelElements, setWheelElements, tableValues, setTableValues, tableCollectionRef}) {
+export default function OptionTable({ user, wheelElements, setWheelElements, gameData, setGameData, tableCollectionRef}) {
     console.log("gae")
-    console.log(tableValues)
     console.log(wheelElements)
+
+    const [tableValues, setTableValues] = useState([])
+
+    useEffect(() => {
+        console.log("In option table")
+        console.log(gameData)
+        setTableValues(gameData.wheel_fields)
+    }, [])
 
     function validEntries() {
         var probSum = 0
@@ -52,42 +59,29 @@ export default function OptionTable({ user, wheelElements, setWheelElements, tab
         return true
     }
 
+    const updateGame = async() => {
+        const gamesCollectionRef = collection(db, 'games');
+        const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+        getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+            const docRef = doc(db, "games", res.docs[0].id);
+            console.log(docRef)
+            updateDoc(docRef, { 'wheel_fields': tableValues });
+        })
+        if (docRef.empty) {
+            console.log('No matching documents.');
+            return;
+        }
+    }
     function updateTableDatabase() {
         if (!validEntries()) {
             return
         }
+
+        updateGame()
         console.log("In updateTableDatabase")
-        deleteTableData().then((res) => {
-            tableValues.forEach((value) => {
-                addValue(value)
-            })
-        })
+
         var wheelArray = constructWheelArray(tableValues)
         setWheelElements(wheelArray)
-    }
-
-    var deleteInputDatabase = async(id) => {
-        var data = doc(db, 'table_values', id)
-        await deleteDoc(data)
-    }
-
-    var addValue = async(data) => {
-        console.log("in add value")
-        var {id} = await addDoc(tableCollectionRef, {'name':data['name'], 'probability': data['probability'], 'user_id': user.uid})
-        console.log("printing id")
-        console.log(id)
-    }
-
-    var deleteTableData = async() => {
-        let data = await getDocs(query(tableCollectionRef, where("user_id", "==", user.uid)))
-        var docs = data.docs.map((doc) => ({...doc.data(), id:doc.id}))
-        console.log("will print out each doc")
-        docs.forEach((doc) => {
-            deleteInputDatabase(doc.id)
-            console.log(doc)
-        })
-        console.log(data.docs)
-        console.log(docs)
     }
 
     function addEntry() {

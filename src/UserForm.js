@@ -5,41 +5,46 @@ import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/
 import emailjs from '@emailjs/browser';
 import NavbarUserForm from './NavbarUserForm'
 
-export default function UserForm({userId, wheelElements, selectItem}) {
+export default function UserForm({gameData, userId, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
     const userCollectionRef = collection(db, 'users')
 
     console.log("in user form")
     console.log(userId)
 
-    const [sendFields, setSendFields] = useState({
-        'user_email': '',
-        'restaurant_name': '',
-        'item_name': '',
-    })
+    const [sendFields, setSendFields] = useState({'item_name': ''})
+
+    const [gameFields, setGameFields] = useState([])
+
+    const [formFields, setFormFields] = useState([])
+
+    const[selectedItem, setSelectedItem] = useState('')
+
     const form = useRef();
     const didMount = useRef(false);
 
     useEffect(() => {
-        if ( !didMount.current || sendFields['item_name'] === "" ) {
+        console.log("Inside the user form")
+        console.log(gameData)
+        var formFieldJSON = {}
+        gameData['form_fields'].forEach(element => {
+            formFieldJSON[element['fieldName']] = ''
+        });
+
+        console.log(formFieldJSON)
+        setSendFields(formFieldJSON)
+    }, [])
+
+    useEffect(() => {
+        if ( !didMount.current || selectedItem['item_name'] === "" ) {
             console.log("Exiting")
             didMount.current = true;
             return;
         }
         console.log("USE EFFECT")
-        console.log(sendFields)
+        console.log(selectedItem)
         sendEmail()
-    }, [sendFields['item_name']])
-
-    useEffect(() => {
-        const getBusName = async() => {
-            let data = await getDocs(query(userCollectionRef, where("user_id", "==", userId)));
-            let snap = data.docs.map((doc) => ({...doc.data()}))[0]
-            setSendFields({...sendFields, restaurant_name: snap['business_name']})
-        }
-
-        getBusName()
-    }, [])
+    }, [selectedItem])
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -48,8 +53,8 @@ export default function UserForm({userId, wheelElements, selectItem}) {
             alert("Please Enter Email Address")
             return
         }
-        const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['user_email']), where("user_id", "==", userId)));
-
+        const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
+        
         if (qSnap.size) {
             alert("email alredy exists!")
           } else {
@@ -59,52 +64,70 @@ export default function UserForm({userId, wheelElements, selectItem}) {
 
     function submitInfo() {
         var selectedItemIndex = selectItem()
-        var selectedItem = wheelElements[selectedItemIndex]
+        var spinnedItem = wheelElements[selectedItemIndex]
+        setSelectedItem(spinnedItem)
         console.log("IN SUBMIT INFO")
-        console.log(selectedItem)
-        setSendFields({...sendFields, item_name: selectedItem})
-
-        if (sendFields['user_email'] != "") {
-            addDoc(collectedInfoRef,  {'email': sendFields['user_email'], 'timestamp': Date.now(), 'user_id': userId, 'item_name': selectedItem})
+        console.log(spinnedItem)
+        setSelectedItem(spinnedItem)
+        var collectedInfoList = []
+        for (var key in sendFields) {
+            console.log("looking at send fields")
+            console.log(sendFields)
+            console.log(key)
+            var obj = {}
+            obj[key] = sendFields[key]
+            collectedInfoList.push(obj)
         }
 
-        // if (sendFields['user_email'] != "") {
-        //     addDoc(emailCollection,  {'email': sendFields['user_email']})
-        // }
+        if (sendFields['email'] != "") {
+            addDoc(collectedInfoRef,  {
+                'collected_info': collectedInfoList, 
+                'timestamp': Date.now(), 
+                'email': sendFields['email'],
+                'item_name': spinnedItem,
+                'game_id': gameData.game_id, 
+                'user_id': gameData.user_id
+            })
+        }
 
-        // if (sendFields['user_phone'] != "") {
-        //     addDoc(phoneCollection,  {'phone_number': sendFields['user_phone']})
-        // }
         console.log("sending email")
     }
 
     function sendEmail () {
         console.log("in send email")
         console.log(sendFields)
-        emailjs.send('service_5fq3k6n', 'template_eidfxld', sendFields, '_5voPVzogLZi48BMl')
+        console.log(selectedItem)
+        const allFields = {...sendFields}
+        allFields['item_name'] = selectedItem
+        allFields['game_name'] = gameData['game_name']
+
+        emailjs.send('service_5fq3k6n', 'template_eidfxld', allFields, '_5voPVzogLZi48BMl')
           .then((result) => {
               console.log(result.text);
           }, (error) => {
               console.log(error.text);
           });
           setTimeout(() => {
-            if (sendFields['item_name'] === "") return;
+            if (allFields['item_name'] === "") return;
 
             console.log("in alert")
-            console.log(sendFields)
-            var alertMessage = "You have won "+sendFields['item_name']+". An email has been sent to " + sendFields['user_email'] + ". Show the email to claim your prize."
+            console.log(allFields)
+            var alertMessage = "You have won "+allFields['item_name']+". An email has been sent to " + allFields['email'] + ". Show the email to claim your prize."
             if(!alert(alertMessage)){window.location.reload();}
           }, 2000)
     };
 
     const handle_change = (e) => {
+        console.log("handing change")
         setSendFields({...sendFields, [e.target.name]: e.target.value })
         console.log(e.target.name)
     }
 
     return (
         <form onSubmit={handleSubmit} class="user-form input-margin">
-            <input placeholder='email' name="user_email" value={sendFields['user_email']} onChange={handle_change}/><br/>
+            {gameData['form_fields'].map((element, index) => {
+                return <input placeholder={element.fieldName} name={element.fieldName} value={sendFields[element['fieldName']]} onChange={handle_change}/>
+            })}
             <button class="submit-button button-green" type="submit">Spin</button>
         </form>
     )

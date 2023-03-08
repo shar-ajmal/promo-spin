@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { collection, getDocs, query, where, addDoc } from 'firebase/firestore'
 import { db } from './firebase-config'
 import { useNavigate } from "react-router-dom";
+import Navbar from './Navbar';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -35,7 +36,7 @@ export default function GamePage({user}) {
             'game_id': newGameId, 
             'game_name': '[NEW GAME]', 
             'form_fields': [{'fieldName': 'email', 'deletable': false, 'fieldId': 1}],
-            'wheel_fields': [{'name': 'item1', 'probability': 50}, {'name': 'item2', 'probability': 50}],
+            'wheel_fields': [{'name': 'item1', 'probability': 50, 'id': uuidv4()}, {'name': 'item2', 'probability': 50, 'id': uuidv4()}],
             'qr_code': qrCodeString
         })
 
@@ -45,6 +46,7 @@ export default function GamePage({user}) {
 
     return (
         <div>
+            <Navbar user={user}></Navbar>
             <h1>Game Dashboard</h1>
             {gameArray.map((element, index) => {
                 return ( 

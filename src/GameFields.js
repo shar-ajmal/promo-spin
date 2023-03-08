@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { collection, getDocs, updateDoc, doc, deleteDoc, addDoc, query, where} from 'firebase/firestore'
+import { db } from "./firebase-config";
 import { v4 as uuidv4 } from 'uuid';
 
 import "./gamecustom.css";
 
-export default function GameFields({user, gameId, formFields, setFormFields}) {
+export default function GameFields({user, gameData, gameId}) {
+    const [formFields, setFormFields] = useState([])    
 
-    useEffect(() => {}, [])
+    useEffect(() => {
+        setFormFields(gameData.form_fields)
+    }, [])
 
     function findFormFieldsIndex(fieldId) {
         for (var i=0; i<formFields.length; i++) {
@@ -34,6 +39,24 @@ export default function GameFields({user, gameId, formFields, setFormFields}) {
         setFormFields(rows => [...rows, {'fieldName': '', 'deletable': true, 'fieldId': uuidv4()}])
     }
 
+    const updateGame = async() => {
+        const gamesCollectionRef = collection(db, 'games');
+        const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+        getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+            const docRef = doc(db, "games", res.docs[0].id);
+            console.log(docRef)
+            updateDoc(docRef, { 'form_fields': formFields });
+        })
+        if (docRef.empty) {
+            console.log('No matching documents.');
+            return;
+        }
+    }
+
+    function save() {
+        updateGame()
+    }
+
     return (
         <div>
                 {console.log("printing field values")}
@@ -60,7 +83,7 @@ export default function GameFields({user, gameId, formFields, setFormFields}) {
             </div>
             <div className="form-field-button-section">
                 <button onClick={addNewField}>Add New Field</button>
-                <button>Save</button>
+                <button onClick={save}>Save</button>
             </div>
         </div>
         

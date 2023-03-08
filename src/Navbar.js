@@ -13,11 +13,8 @@ export default function Navbar({user}) {
     return(
         <div class="topnav">
             <a onClick={() => handleBack('/')}>Admin</a>
-            <a onClick={() => handleBack('/info')}>Info</a>
             <a onClick={() => handleBack('/emails')}>Emails</a>
             <a onClick={() => handleBack('/chart')}>Chart</a>
-            <a onClick={() => handleBack('/custom')}>Custom</a>
-            <a onClick={() => handleBack(spinUrl)}>User Form</a>
             <a onClick={() => auth.signOut()}>Logout</a>
         </div>
     )

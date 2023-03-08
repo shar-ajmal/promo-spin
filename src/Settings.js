@@ -4,7 +4,7 @@ import { db } from "./firebase-config";
 import Navbar from "./Navbar"
 import {saveAs} from "file-saver";
 
-export default function Settings({user}) {
+export default function Settings({gameData}) {
     const [busName, setBusName] = useState("");
     const [qrCode, setQrCode] = useState();
     const [numInfo, setNumInfo] = useState();
@@ -15,43 +15,52 @@ export default function Settings({user}) {
 
 
 
-    function handleChange(e) {
-        setBusName(e.target.value)
-    }
+    // function handleChange(e) {
+    //     setBusName(e.target.value)
+    // }
 
-    function onSave() {
-        console.log("inside onsve")
-        getDocs(query(userCollectionRef, where("user_id", "==", user.uid))).then((res) => {
-            console.log("hello world!")
-            console.log(res.docs[0].id)
-            console.log(res.snapshot)
-            const docRef = doc(db, "users", res.docs[0].id);
-            console.log(docRef)
-            updateDoc(docRef, {'business_name': busName})
-            // if (res.docs.length === 0) {
-            //     console.log("adding name")
-            //     addDoc(busNameCollectionRef, {'user_id': user.uid, 'name': busName})
-            // }
-            // else {
-            //     const docRef = doc(db, "busName", res.docs[0].id);
-            //     updateDoc(docRef, {'name': busName})
-            // }
-        })
-    }
+    // function onSave() {
+    //     console.log("inside onsve")
+    //     getDocs(query(userCollectionRef, where("user_id", "==", user.uid))).then((res) => {
+    //         console.log("hello world!")
+    //         console.log(res.docs[0].id)
+    //         console.log(res.snapshot)
+    //         const docRef = doc(db, "users", res.docs[0].id);
+    //         console.log(docRef)
+    //         updateDoc(docRef, {'business_name': busName})
+    //         // if (res.docs.length === 0) {
+    //         //     console.log("adding name")
+    //         //     addDoc(busNameCollectionRef, {'user_id': user.uid, 'name': busName})
+    //         // }
+    //         // else {
+    //         //     const docRef = doc(db, "busName", res.docs[0].id);
+    //         //     updateDoc(docRef, {'name': busName})
+    //         // }
+    //     })
+    // }
 
     function downloadQRCode () {
-        saveAs(qrCode, "Spin-Wheel-QRCode");
+        var downloadTitle = gameData.game_name + '-QRCode'
+        saveAs(qrCode, downloadTitle);
+    }
+
+    const getGameInfo = async() => {
+        setQrCode(gameData.qr_code)
+        console.log("in info num")
+        let data = await getDocs(query(infoCollectionRef, where("game_id", "==", gameData.game_id)));
+        let docs = data.docs.map((doc) => ({...doc.data()}))
+        setNumInfo(docs.length)
     }
 
 
-    const userInfo = async() => {
-        console.log("inside qr code use effect")
-        let data = await getDocs(query(userCollectionRef, where("user_id", "==", user.uid)));
-        let snap = data.docs.map((doc) => ({...doc.data()}))[0]
-        setQrCode(snap['urlRef'])
-        setBusName(snap['business_name'])
-        console.log('exiting use effect')
-    }
+    // const userInfo = async() => {
+    //     console.log("inside qr code use effect")
+    //     let data = await getDocs(query(userCollectionRef, where("user_id", "==", user.uid)));
+    //     let snap = data.docs.map((doc) => ({...doc.data()}))[0]
+    //     setQrCode(snap['urlRef'])
+    //     setBusName(snap['business_name'])
+    //     console.log('exiting use effect')
+    // }
 
     useEffect(() => {
         // const getQRCode = async() => {
@@ -63,8 +72,7 @@ export default function Settings({user}) {
 
         // getQRCode()
         // getBusName()
-        userInfo()
-        getCollectedInfo()
+        getGameInfo()
     }, [])
 
     // const getBusName = async() => {
@@ -78,7 +86,7 @@ export default function Settings({user}) {
 
     const getCollectedInfo = async() => {
         console.log("in info num")
-        let data = await getDocs(query(infoCollectionRef, where("user_id", "==", user.uid)));
+        let data = await getDocs(query(infoCollectionRef, where("game_id", "==", gameData.game_id)));
         let docs = data.docs.map((doc) => ({...doc.data()}))
         setNumInfo(docs.length)
     }
@@ -86,14 +94,6 @@ export default function Settings({user}) {
 
     return (
         <div>
-            <Navbar user={user}></Navbar>
-            <h3>Business Name</h3>
-            <div className="bus-container">
-                <div class="input-margin">
-                    <input placeholder="Enter Restaurant Name" value={busName} onChange={handleChange}/>
-                </div>
-                <button class="bus-container-button" onClick={onSave}>Save</button>
-            </div>
             <h5>Emails Collected: {numInfo}</h5>
             <div class="input-margin">
                 <h1>QR Code</h1>

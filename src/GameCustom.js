@@ -4,6 +4,10 @@ import "./gamecustom.css";
 import GameName from "./GameName";
 import GameFields from "./GameFields";
 import SpinWheel from "./SpinWheel";
+import OptionTable from "./OptionTable";
+import Navbar from "./Navbar";
+import Settings from "./Settings";
+
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { constructWheelArray } from './function';
 import { db } from './firebase-config';
@@ -70,34 +74,38 @@ export default function GameCustom({user}) {
 
   return (
     <div className="screen-with-tabs">
+        <Navbar user={user}/>
       <div className="tabs">
         <button
           className={`tab ${activeTab === "tab1" ? "active" : ""}`}
           onClick={() => handleTabClick("tab1")}
         >
-          Tab 1
+          Form Field
         </button>
         <button
           className={`tab ${activeTab === "tab2" ? "active" : ""}`}
           onClick={() => handleTabClick("tab2")}
         >
-          Tab 2
+          Spin Wheel
         </button>
       </div>
-      <div className="elements">
+      <div className="desktop-elements">
         <div class="section1">
+            <h2>Form Field Customization</h2>
             <h3>Game Name</h3>
             {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>}
+            <h3>Game Form Fields</h3>
+            {gameData ? <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields> : <p>Loading...</p>}
+            <h3>QR Code</h3>
+            {gameData ? <Settings gameData={gameData}/> : <p>Loading...</p>}
         </div>
         <div class="section2">
-            <h3>Game Form Fields</h3>
-            <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields>
-        </div>
-        <div>
-            <h3>Spin Wheel</h3>
+
+            <h2>Spin Wheel Customization</h2>
             <SpinWheel wheelElements={wheelElements}/>
+            {gameData ? <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/> : <p>Loading...</p>}
         </div>
-        </div>
+      </div>
         <div className="tab-section">
         {activeTab === "tab1" && (
             <>
@@ -107,13 +115,19 @@ export default function GameCustom({user}) {
                 </div>
                 <div>
                     <h3>Game Form Fields</h3>
-                    <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields>
+                    {gameData ? <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields> : <p>Loading...</p>}
+                </div>
+                <div>
+                    <h3>QR Code</h3>
+                    {gameData ? <Settings gameData={gameData}/> : <p>Loading...</p>}
                 </div>
             </>
         )}
         {activeTab === "tab2" && (
           <div>
             <SpinWheel wheelElements={wheelElements}/>
+            <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/>
+
           </div>
         )}
         </div>

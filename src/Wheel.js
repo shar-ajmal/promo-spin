@@ -39,6 +39,7 @@ export default class Wheel extends React.Component {
   render() {
     const { selectedItem } = this.state;
     const  items = this.props.wheelElements
+    const formFields = this.props.gameData['form_fields']
     // console.log()
     // const items = ['dog', 'cat']
     console.log("selectedItemInWheel")
@@ -67,7 +68,7 @@ export default class Wheel extends React.Component {
             ))}
           </div>
         </div>
-        <UserForm userId={this.props.userId} selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
+        <UserForm gameData={this.props.gameData} userId={this.props.userId} selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
       </div>
     );
   }
