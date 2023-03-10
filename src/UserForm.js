@@ -128,7 +128,7 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
             {gameData['form_fields'].map((element, index) => {
                 return <input placeholder={element.fieldName} name={element.fieldName} value={sendFields[element['fieldName']]} onChange={handle_change}/>
             })}
-            <button class="submit-button button-green" type="submit">Spin</button>
+            <button type="submit" class="submit-button button-green" type="submit">Spin</button>
         </form>
     )
 }
