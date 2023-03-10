@@ -3,11 +3,21 @@
     background-color: #333;
     overflow: hidden;
     margin-bottom: 30px;
+    padding: 0px 20px;
   }
   
   /* Style the links inside the navigation bar */
-  .topnav a {
+  .topnav .category {
     float: left;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  .logout {
+    float: right;
     color: #f2f2f2;
     text-align: center;
     padding: 14px 16px;

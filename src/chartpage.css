@@ -1,0 +1,8 @@
+.chart-container {
+    display: flex;
+    justify-content: center;
+}
+
+.prize-data-table {
+    margin: auto;
+}

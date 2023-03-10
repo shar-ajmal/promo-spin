@@ -12,10 +12,10 @@ export default function Navbar({user}) {
 
     return(
         <div class="topnav">
-            <a onClick={() => handleBack('/')}>Admin</a>
-            <a onClick={() => handleBack('/emails')}>Emails</a>
-            <a onClick={() => handleBack('/chart')}>Chart</a>
-            <a onClick={() => auth.signOut()}>Logout</a>
+            <a class="category" onClick={() => handleBack('/')}>Admin</a>
+            <a class="category" onClick={() => handleBack('/emails')}>Emails</a>
+            <a class="category" onClick={() => handleBack('/chart')}>Chart</a>
+            <a class="logout" onClick={() => auth.signOut()}>Logout</a>
         </div>
     )
 }

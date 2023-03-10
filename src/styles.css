@@ -142,7 +142,8 @@
   .email-table {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
-    width: 100%;
+    width: 75%;
+    margin: auto;
   }
   
   .email-table td, .email-table th {

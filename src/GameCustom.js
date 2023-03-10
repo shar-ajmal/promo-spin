@@ -8,10 +8,12 @@ import OptionTable from "./OptionTable";
 import Navbar from "./Navbar";
 import Settings from "./Settings";
 
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore'
 import { constructWheelArray } from './function';
 import { db } from './firebase-config';
 import { useParams } from 'react-router-dom';
+
+import { useNavigate } from "react-router-dom";
 
 
 export default function GameCustom({user}) {
@@ -28,6 +30,8 @@ export default function GameCustom({user}) {
 
     const params = useParams()
     const gameId = params.gameId
+
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -68,13 +72,48 @@ export default function GameCustom({user}) {
   
 
     console.log(user)
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
+
+    const deleteData = async() => {
+        getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameId))).then((res) => {
+            const docRef = doc(db, "games", res.docs[0].id);
+            console.log(docRef)
+            updateDoc(docRef, {'game_enabled': false})
+                .then(() => {
+                console.log("Document successfully deleted!");
+                navigate('/')
+                })
+                .catch((error) => {
+                console.error("Error removing document: ", error);
+                });
+        })
+    }
+
+    function deleteGame() {
+        var response = window.confirm("Are you sure you want to delete this game? You'll lost the QR code associated with the game.")
+
+        if (response) {
+            deleteData()
+        }
+        else {
+            // alert("Denied")
+        }
+
+    }
+
+    // const handleBack = (page) => {
+    //     navigate(page)
+    // }
 
   return (
     <div className="screen-with-tabs">
         <Navbar user={user}/>
+        <div class="top-button-container">
+            <button onClick={() => navigate('/')}>Back</button>
+            <button onClick={deleteGame}>Delete Game</button>
+        </div>
       <div className="tabs">
         <button
           className={`tab ${activeTab === "tab1" ? "active" : ""}`}

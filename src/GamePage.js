@@ -3,6 +3,7 @@ import { collection, getDocs, query, where, addDoc } from 'firebase/firestore'
 import { db } from './firebase-config'
 import { useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
+import GameCard from './GameCard';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,15 +13,17 @@ export default function GamePage({user}) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        getTableData()
+        getGameData()
     }, [])
 
-    const getTableData = async() => {
+    const getGameData = async() => {
         console.log("getting user dt")
         let data = await getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid)));
-        console.log("Table elements")
+        console.log("Game elements")
         console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-        setGameArray(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+        var gameList = data.docs.map((doc) => ({...doc.data(), id:doc.id}))
+        var enabledGameList = gameList.filter(game => game.game_enabled || game.game_enabled === undefined)
+        setGameArray(enabledGameList)
     }
 
     const redirect = (gameId) => {
@@ -37,7 +40,8 @@ export default function GamePage({user}) {
             'game_name': '[NEW GAME]', 
             'form_fields': [{'fieldName': 'email', 'deletable': false, 'fieldId': 1}],
             'wheel_fields': [{'name': 'item1', 'probability': 50, 'id': uuidv4()}, {'name': 'item2', 'probability': 50, 'id': uuidv4()}],
-            'qr_code': qrCodeString
+            'qr_code': qrCodeString, 
+            'game_enabled': true
         })
 
         const gameUrl = "/game/" + newGameId
@@ -48,15 +52,18 @@ export default function GamePage({user}) {
         <div>
             <Navbar user={user}></Navbar>
             <h1>Game Dashboard</h1>
-            {gameArray.map((element, index) => {
-                return ( 
-                    <div>
-                        {element.game_name === '' ? "INSERT NAME" : element.game_name}
-                        <button onClick={() => redirect(element.game_id)}>View Game</button>
-                    </div>
-                )
-            })}
-            <button onClick={createGame}>Create New Game</button>
+            <div class="top-button-container">
+                <button onClick={createGame}>Create New Game</button>
+            </div>
+            <div>
+                <div className='card-list'>
+                    {gameArray.map((element, index) => {
+                        return (
+                            <GameCard gameInfo={element}></GameCard>
+                        )
+                    })}
+                </div>
+            </div>
         </div>
     )
 }

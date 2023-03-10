@@ -76,15 +76,18 @@ export default function EmailPage({user}) {
         var wb = utils.book_new();
         var ws = utils.json_to_sheet(filteredEmailList);
 
+        var fileName = selectedGame['game_name'] + ".xlsx"
         utils.book_append_sheet(wb, ws, "MySheet1");
-        writeFileXLSX(wb, "Test1.xlsx")
+        writeFileXLSX(wb, fileName)
     }
 
     return (
         <div>
             <Navbar user={user}></Navbar>
-            <button onClick={exportData}>Export</button>
             <DropdownButton gameList={gameList} selectedGame={selectedGame} setSelectedGame={setSelectedGame}></DropdownButton>
+            <br></br>
+            <button onClick={exportData}>Export</button>
+
             {filteredEmailList ? <EmailList emailList={filteredEmailList}></EmailList> : <p>Loading...</p>}
         </div>
     )
