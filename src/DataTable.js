@@ -37,8 +37,10 @@ export default function DataTable({filteredDataList}){
 
         console.log("printing prize arr")
         prizeArray.sort(function(a, b) {
-            return parseFloat(a.prizeCount) - parseFloat(b.prizeCount);
+            return parseFloat(b.prizeCount) - parseFloat(a.prizeCount);
         });
+        const sumTotal = prizeArray.reduce((acc, obj) => acc + obj.prizeCount, 0);
+        prizeArray.push({'prizeName': 'total', "prizeCount": sumTotal})
         console.log(prizeArray)
 
 

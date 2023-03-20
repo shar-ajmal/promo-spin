@@ -49,7 +49,7 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
     const handleSubmit = async(e) => {
         e.preventDefault();
         console.log(sendFields)
-        if (sendFields['user_email'] === "") {
+        if (sendFields['email'] === "") {
             alert("Please Enter Email Address")
             return
         }
@@ -124,11 +124,11 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
     }
 
     return (
-        <form onSubmit={handleSubmit} class="user-form input-margin">
+        <form class="user-form input-margin">
             {gameData['form_fields'].map((element, index) => {
                 return <input placeholder={element.fieldName} name={element.fieldName} value={sendFields[element['fieldName']]} onChange={handle_change}/>
             })}
-            <button type="submit" class="submit-button button-green" type="submit">Spin</button>
+            <button onClick={handleSubmit} type="submit" class="submit-button button-green">Spin</button>
         </form>
     )
 }

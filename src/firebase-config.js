@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
 
 import {
   getFirestore,
@@ -95,6 +96,54 @@ const generateUser = (user) => {
       // qrCodeImg.setAttribute('src',response.url)
   })
 }
+
+export default function standardizeData (list) {
+  var fieldSet = new Set();
+  var formEntries = []
+  list.forEach((element) => {
+      element['collected_info'].forEach((obj) => {
+          var key = Object.keys(obj)[0];
+          fieldSet.add(key)
+      })
+  })
+
+  console.log("Printing out set")
+  console.log(fieldSet)
+  list.forEach((element) => {
+      var formValue = {'prize': element['item_name']}
+      var dateString = moment.unix(element['timestamp']).format("MM/DD/YYYY");
+
+      formValue['date'] = dateString
+      console.log("Testing")
+      console.log(element['collected_info'])
+      element['collected_info'].forEach((obj) => {
+          console.log("NEW VALUE")
+          var key = Object.keys(obj)[0];
+          var value = obj[key];
+          console.log(key)
+          console.log(value)
+          formValue[key] = value
+      })
+
+      fieldSet.forEach((element) => {
+          console.log("PRINTING SET VAL")
+          console.log(element)
+          if (!(element in formValue)) {
+              console.log("ADDING SET VAL")
+              console.log(element)
+              formValue[element] = ''
+          }
+      })
+      console.log("pushing form value")
+      console.log(formValue)
+      formEntries.push(formValue)
+  })
+  console.log("printing form entries")
+  console.log(formEntries)
+
+  return formEntries
+}
+
 export const signInWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
