@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Input, Button, Space, Typography } from 'antd';
 
 export default function InputFields({fuckhello,tableValues, setTableValues, id, fName, fProbability}) {
     var [fieldName, setFieldName] = useState('')
@@ -65,9 +66,9 @@ export default function InputFields({fuckhello,tableValues, setTableValues, id, 
     
     return (
         <>
-            <td><input value={fieldName} onChange={changeName}/></td>
-            <td className='prob-row'><input value={fieldProbability} onChange={changeProbability} type="number" pattern="^-?[0-9]\d*\.?\d*$"/> <div className='prob-percent'>%</div> </td>
-            <td><button class="button-red" onClick={deleteEntry}>Delete</button></td>
+            <td><Input value={fieldName} onChange={changeName}/></td>
+            <td className='prob-row'><Input value={fieldProbability} onChange={changeProbability} type="number" pattern="^-?[0-9]\d*\.?\d*$"/> <div className='prob-percent'>%</div> </td>
+            <td><Button danger class="button-red" onClick={deleteEntry}>Delete</Button></td>
         </>
     )
 }

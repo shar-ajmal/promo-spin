@@ -6,3 +6,7 @@
 .prize-data-table {
     margin: auto;
 }
+
+.chart-page-element {
+    min-width: 50%;
+}

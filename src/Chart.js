@@ -43,6 +43,9 @@ export default function Chart({filteredDataList}){
     }
 
     return (
+        <div className="chart-page-element">
+        <h2>Info Collected over Time</h2>
+
         <div class="chart-container">
             <ResponsiveContainer width="95%" height={500}>
                 <BarChart data={chartData}>
@@ -60,5 +63,6 @@ export default function Chart({filteredDataList}){
                 </BarChart>
             </ResponsiveContainer>
         </div> 
+        </div>
     )
 }

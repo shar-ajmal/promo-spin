@@ -14,6 +14,8 @@ import { useState, useEffect } from 'react';
 import InputFields from './InputField';
 import { constructWheelArray } from './function';
 import RemainingProb from './RemainingProb';
+import { Button, Typography } from 'antd'
+
 
 export default function OptionTable({ user, wheelElements, setWheelElements, gameData, setGameData, tableCollectionRef}) {
     console.log("gae")
@@ -21,11 +23,29 @@ export default function OptionTable({ user, wheelElements, setWheelElements, gam
 
     const [tableValues, setTableValues] = useState([])
 
+    const { Text, Link } = Typography;
+
+
     useEffect(() => {
         console.log("In option table")
         console.log(gameData)
         setTableValues(gameData.wheel_fields)
     }, [])
+
+    const saveButtonStyle = {
+        background: '#52c41a',
+    borderColor: '#52c41a',
+    color: '#fff',
+    fontWeight: 500,
+    transition: 'all 0.3s ease-in-out',
+    float: 'right'
+      };
+
+      const hoverStyle = {
+        background: '#5eff5e',
+        borderColor: '#5eff5e',
+        transition: 'all 0.3s ease-in-out',
+      };
 
     function validEntries() {
         var probSum = 0
@@ -90,15 +110,25 @@ export default function OptionTable({ user, wheelElements, setWheelElements, gam
 
     return (
         <div>
-            <h1>Entry Table</h1>
+            {/* <Typography.Title level={3} style={{ margin: 0 }}>
+                Prize Name
+            </Typography.Title> */}
             {console.log("HELLO")}
             {console.log(tableValues)}
             <RemainingProb tableValues={tableValues}></RemainingProb>
             <table class="table input-margin" id="table">
                 {console.log("gae3")}
                 <tr>
-                    <th>Entry Name</th>
-                    <th>Probability</th>
+                    <th>
+                        <Typography.Title level={5} style={{ margin: 0 }}>
+                            Prize Name
+                        </Typography.Title>
+                    </th>
+                    <th>
+                        <Typography.Title level={5} style={{ margin: 0 }}>
+                            Prize Probability
+                        </Typography.Title>
+                    </th>
                 </tr>
                 {tableValues.map((element, index) => { return (
                     <tr class="entry-row" id={"entry-row-" + index}>
@@ -108,9 +138,19 @@ export default function OptionTable({ user, wheelElements, setWheelElements, gam
                 {console.log("gae5")}
                 {console.log(tableValues)}
             </table>
-            <button class="button-green" id="save-button"  onClick={updateTableDatabase}>Save</button>
-            <button class="button-blue" id="add-button"  onClick={addEntry}>Add New Entry</button>
-            {console.log("gae6")}
+            <div className='wheel-button-container'>
+                <Button type="primary" onClick={addEntry}>Add New Entry</Button>
+                <Button className='save-button' style={saveButtonStyle}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.background = hoverStyle.background;
+                        e.currentTarget.style.borderColor = hoverStyle.borderColor;
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.background = saveButtonStyle.background;
+                        e.currentTarget.style.borderColor = saveButtonStyle.borderColor;
+                    }}
+                    onClick={updateTableDatabase}>Save</Button>
+            </div>
         </div>
     )
 }

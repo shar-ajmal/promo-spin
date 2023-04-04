@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {Typography } from 'antd'
 
 export default function RemainingProb({tableValues}) {
     const [remainProb, setRemainProb] = useState()
@@ -18,7 +19,19 @@ export default function RemainingProb({tableValues}) {
     }, [tableValues])
 
     return (
-        <div className="total-prob"><div className="total-prob-el ">Total Probability:</div> <div className="total-prob-el ">{remainProb}%</div></div>
+        <div className="total-prob">
+            <div className="total-prob-el ">
+                        <Typography.Title level={5} style={{ margin: 0 }}>
+                            Total Probability
+                        </Typography.Title>
+            </div> 
+            <div className="total-prob-el ">
+            <Typography.Title level={5} style={{ margin: 0 }}>
+                {remainProb}%
+            </Typography.Title>
+            
+            </div>
+        </div>
     )
 
 }

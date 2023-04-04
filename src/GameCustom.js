@@ -7,11 +7,13 @@ import SpinWheel from "./SpinWheel";
 import OptionTable from "./OptionTable";
 import Navbar from "./Navbar";
 import Settings from "./Settings";
+import GameInfo from "./GameInfo";
 
 import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore'
 import { constructWheelArray } from './function';
 import { db } from './firebase-config';
 import { useParams } from 'react-router-dom';
+import { Button, Typography } from 'antd'
 
 import { useNavigate } from "react-router-dom";
 
@@ -111,8 +113,8 @@ export default function GameCustom({user}) {
     <div className="screen-with-tabs">
         <Navbar user={user}/>
         <div class="top-button-container">
-            <button onClick={() => navigate('/')}>Back</button>
-            <button onClick={deleteGame}>Delete Game</button>
+            <Button onClick={() => navigate('/')}> {"<- Back"}</Button>
+            <Button danger onClick={deleteGame}>Delete Game</Button>
         </div>
       <div className="tabs">
         <button
@@ -130,37 +132,44 @@ export default function GameCustom({user}) {
       </div>
       <div className="desktop-elements">
         <div class="section1">
-            <h2>Form Field Customization</h2>
-            <h3>Game Name</h3>
+            {gameData ? <GameInfo user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+            {/* <Typography.Title level={2} style={{ margin: 0 }}>
+                Form Field Customization
+            </Typography.Title>
+            <br></br>
+
+            <Typography.Title level={3} style={{ margin: 0 }}>
+                Game Name
+            </Typography.Title>
             {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>}
-            <h3>Game Form Fields</h3>
+            <br></br>
+
+            <Typography.Title level={3} style={{ margin: 0 }}>
+                Game Form Fields
+            </Typography.Title>
             {gameData ? <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields> : <p>Loading...</p>}
-            <h3>QR Code</h3>
-            {gameData ? <Settings gameData={gameData}/> : <p>Loading...</p>}
+            <br></br>
+            
+            <Typography.Title level={3} style={{ margin: 0 }}>
+                QR Code
+            </Typography.Title>
+            {gameData ? <Settings gameData={gameData}/> : <p>Loading...</p>} */}
         </div>
         <div class="section2">
 
-            <h2>Spin Wheel Customization</h2>
+            <Typography.Title level={2} style={{ margin: 0 }}>
+                Spin Wheel Customization
+            </Typography.Title>
+            <br></br>
             <SpinWheel wheelElements={wheelElements}/>
             {gameData ? <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/> : <p>Loading...</p>}
         </div>
       </div>
         <div className="tab-section">
         {activeTab === "tab1" && (
-            <>
-                <div>
-                    <h3>Game Name</h3>
-                    {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>}
-                </div>
-                <div>
-                    <h3>Game Form Fields</h3>
-                    {gameData ? <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields> : <p>Loading...</p>}
-                </div>
-                <div>
-                    <h3>QR Code</h3>
-                    {gameData ? <Settings gameData={gameData}/> : <p>Loading...</p>}
-                </div>
-            </>
+            <div style={{padding: '20px'}}>
+                {gameData ? <GameInfo user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+            </div>
         )}
         {activeTab === "tab2" && (
           <div>

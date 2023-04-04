@@ -26,9 +26,15 @@
   }
   
   /* Change the color of links on hover */
-  .topnav a:hover {
-    background-color: #ddd;
+  .category:hover {
+    background-color: #4f4e4e;
     color: black;
+    cursor: pointer;
+  }
+  .logout:hover {
+    background-color: #4f4e4e;
+    color: black;
+    cursor: pointer;
   }
   
   /* Add a color to the active/current link */

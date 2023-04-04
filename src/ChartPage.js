@@ -164,10 +164,10 @@ export default function ChartPage({user}) {
         <div>
             <Navbar user={user}></Navbar>
             <DropdownButton gameList={gameList} selectedGame={selectedGame} setSelectedGame={setSelectedGame}></DropdownButton>
-            <h2>Prize Table</h2>
-            <DataTable filteredDataList={filteredDataList}></DataTable>
-            <h2>Info Collected over Time</h2>
-            <Chart filteredDataList={filteredDataList}></Chart>
+            <div style={{display: 'flex'}}>
+                <DataTable filteredDataList={filteredDataList}></DataTable>
+                <Chart filteredDataList={filteredDataList}></Chart>
+            </div>
         </div>
       );
 }

@@ -9,7 +9,7 @@ import DropdownButton from "./DropdownButton";
 import EmailList from "./EmailList";
 
 import standardizeData from "./firebase-config";
-
+import {Button} from 'antd';
 export default function EmailPage({user}) {
     const [filteredEmailList, setFilteredEmailList] = useState()
     const [globalEmailList, setGlobalEmailList] = useState([])
@@ -112,11 +112,10 @@ export default function EmailPage({user}) {
     return (
         <div>
             <Navbar user={user}></Navbar>
-            <DropdownButton gameList={gameList} selectedGame={selectedGame} setSelectedGame={setSelectedGame}></DropdownButton>
+            <DropdownButton style={{margin: '20px'}} gameList={gameList} selectedGame={selectedGame} setSelectedGame={setSelectedGame}></DropdownButton>
             {/* <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" onClick={toggleGames}/>
             <label for="vehicle1"> Hide Disabled Games </label> */}
-            <br></br>
-            <button onClick={exportData}>Export</button>
+            <Button type="primary" style={{margin: '20px'}} onClick={exportData}>Export</Button>
 
             {filteredEmailList ? <EmailList emailList={filteredEmailList}></EmailList> : <p>Loading...</p>}
         </div>

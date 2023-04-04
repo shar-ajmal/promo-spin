@@ -51,24 +51,27 @@ export default function DataTable({filteredDataList}){
     }
 
     return (
-        <table class=" email-table prize-data-table">
-            <tr>
-                <th>Prize Name</th>
-                <th>Count</th>
-            </tr>
-            {console.log("viewing prize info")}
-            {console.log(prizeData)}
-            {prizeData.map((element, index) => { return (
+        <div className="chart-page-element">
+            <h2>Prize Table</h2>
+            <table class=" email-table prize-data-table">
                 <tr>
-                    <td>
-                        {element['prizeName']}
-                    </td>
-                    <td>
-                        {element['prizeCount']}
-                    </td>
+                    <th>Prize Name</th>
+                    <th>Count</th>
                 </tr>
-            )
-            })}
-        </table>
+                {console.log("viewing prize info")}
+                {console.log(prizeData)}
+                {prizeData.map((element, index) => { return (
+                    <tr>
+                        <td>
+                            {element['prizeName']}
+                        </td>
+                        <td>
+                            {element['prizeCount']}
+                        </td>
+                    </tr>
+                )
+                })}
+            </table>
+        </div>
     )
 }

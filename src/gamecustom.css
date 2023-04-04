@@ -34,7 +34,6 @@
     height: 100px;
     width: 200px;
     padding: 20px;
-    border: 1px solid black;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -51,6 +50,15 @@
     display: flex;
     justify-content: space-between;
 }
+
+.input-container {
+    margin: 20px 0px;
+}
+
+.save-button:hover {
+    background: white;
+    border-color: white;
+  }
   
   @media (max-width: 768px) {
     .tabs {

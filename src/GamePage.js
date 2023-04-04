@@ -4,6 +4,7 @@ import { db } from './firebase-config'
 import { useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
 import GameCard from './GameCard';
+import { Button, Typography } from 'antd'
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -51,9 +52,11 @@ export default function GamePage({user}) {
     return (
         <div>
             <Navbar user={user}></Navbar>
-            <h1>Game Dashboard</h1>
+            <Typography.Title level={1} style={{ margin: 0 }}>
+                Game Dashboard
+            </Typography.Title>
             <div class="top-button-container">
-                <button onClick={createGame}>Create New Game</button>
+                <Button type='primary' onClick={createGame} size='large'>Create New Game +</Button>
             </div>
             <div>
                 <div className='card-list'>

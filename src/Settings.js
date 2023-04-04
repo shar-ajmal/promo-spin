@@ -3,6 +3,7 @@ import { collection, addDoc, getDocs, query, where, doc, updateDoc } from 'fireb
 import { db } from "./firebase-config";
 import Navbar from "./Navbar"
 import {saveAs} from "file-saver";
+import { Typography, Button } from 'antd';
 
 export default function Settings({gameData}) {
     const [busName, setBusName] = useState("");
@@ -12,6 +13,8 @@ export default function Settings({gameData}) {
     // const busNameCollectionRef = collection(db, 'busName')
     const infoCollectionRef = collection(db, 'collected_info')
     const userCollectionRef = collection(db, 'users')
+    const { Text, Link } = Typography;
+
 
 
 
@@ -94,11 +97,14 @@ export default function Settings({gameData}) {
 
     return (
         <div>
-            <h5>Emails Collected: {numInfo}</h5>
+            <Typography.Title level={5} style={{ margin: 0 }}>
+                Emails Collected: {numInfo}
+            </Typography.Title>
             <div class="input-margin">
-                <h1>QR Code</h1>
-                <p>This code will link to the user form. Download it and have clients scan it to spin a prize.</p>
-                <button class="button-blue" onClick={downloadQRCode}>Download</button>
+                <Text>This code will link to the user form. Download it and have clients scan it to spin a prize.</Text>
+                <br></br>
+                <br></br>
+                <Button type="primary" onClick={downloadQRCode}>Download</Button>
                 <div class="margin-20"><img src={qrCode}/></div>
             </div>
         </div>
