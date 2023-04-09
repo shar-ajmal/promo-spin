@@ -44,25 +44,25 @@ export default function Chart({filteredDataList}){
 
     return (
         <div className="chart-page-element">
-        <h2>Info Collected over Time</h2>
+            <h2>Info Collected over Time</h2>
 
-        <div class="chart-container">
-            <ResponsiveContainer width="95%" height={500}>
-                <BarChart data={chartData}>
-                    
-                    <XAxis 
-                    dataKey = 'timestamp'
-                    domain = {['auto', 'auto']}
-                    name = 'Time'
-                    tickFormatter = {(unixTime) => moment.unix(unixTime).format('MMM Do')}
-                    type = 'number'
-                    >
-                    </XAxis>
-                    <YAxis/>
-                    <Bar dataKey="count" fill="#8884d8" name="Count" barSize={30}/>
-                </BarChart>
-            </ResponsiveContainer>
-        </div> 
+            <div class="chart-container" style={{marginRight: '60px'}}>
+                <ResponsiveContainer width="95%" height={500}>
+                    <BarChart data={chartData}>
+                        
+                        <XAxis 
+                        dataKey = 'timestamp'
+                        domain = {['auto', 'auto']}
+                        name = 'Time'
+                        tickFormatter = {(unixTime) => moment.unix(unixTime).format('MMM Do')}
+                        type = 'number'
+                        >
+                        </XAxis>
+                        <YAxis/>
+                        <Bar dataKey="count" fill="#8884d8" name="Count" barSize={30}/>
+                    </BarChart>
+                </ResponsiveContainer>
+            </div> 
         </div>
     )
 }

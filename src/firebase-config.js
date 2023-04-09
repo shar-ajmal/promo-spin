@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import firebase from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
@@ -12,6 +13,8 @@ import {
   collection,
   where,
   addDoc,
+  doc,
+  setDoc,
 } from "@firebase/firestore";
 
 import  {GoogleAuthProvider,getAuth,signInWithPopup} from "firebase/auth";
@@ -20,7 +23,7 @@ import  {GoogleAuthProvider,getAuth,signInWithPopup} from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDH5E0czNAAbRleyvnKdA_1PhY-PHVz4dY",
   authDomain: "promo-spin-staging.firebaseapp.com",
   projectId: "promo-spin-staging",
@@ -30,8 +33,9 @@ const firebaseConfig = {
   measurementId: "G-E485M38X0S"
 };
 
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const storage = getStorage(app);
 
@@ -76,7 +80,9 @@ const generateUser = (user) => {
       console.log(response.url)
       // console.log(qrCodeImg)
       console.log("qr code gen")
-      addDoc(collection(db, "users"), {
+
+      const userRef = doc(db, "users", user.uid);
+      const userData = {
         user_id: user.uid,
         urlRef: urlString,
         name: user.displayName,
@@ -84,7 +90,17 @@ const generateUser = (user) => {
         email: user.email,
         show_onboard_flow: true,
         business_name: ""
-      });
+      }
+      setDoc(userRef, userData);
+      // addDoc(collection(db, "users"), {
+      //   user_id: user.uid,
+      //   urlRef: urlString,
+      //   name: user.displayName,
+      //   authProvider: "google",
+      //   email: user.email,
+      //   show_onboard_flow: true,
+      //   business_name: ""
+      // });
       // addDoc(collection(db, "games"), {
       //   user_id: user.uid,
       //   game_id: firstGameID,
@@ -97,7 +113,7 @@ const generateUser = (user) => {
   })
 }
 
-export default function standardizeData (list) {
+export function standardizeData (list) {
   var fieldSet = new Set();
   var formEntries = []
   list.forEach((element) => {

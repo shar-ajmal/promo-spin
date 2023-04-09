@@ -10,6 +10,7 @@ import Navbar from './Navbar';
 import DropdownButton from './DropdownButton';
 import Chart from './Chart';
 import DataTable from './DataTable';
+import './gamecustom.css'
 
 export default function ChartPage({user}) {
     const collectedInfoRef = collection(db, 'collected_info')
@@ -22,12 +23,19 @@ export default function ChartPage({user}) {
     const [globalDataList, setGolbalDataList] = useState([])
     const [gameList, setGameList] = useState([])
     const [selectedGame, setSelectedGame] = useState('')
+    const [activeTab, setActiveTab] = useState("tab1");
+
 
     const navigate = useNavigate();
 
     const handleBack = () => {
         navigate('/')
     }
+
+    console.log(user)
+    const handleTabClick = (tab) => {
+        setActiveTab(tab);
+    };
 
     useEffect(() => {
         console.log("We here")
@@ -164,9 +172,37 @@ export default function ChartPage({user}) {
         <div>
             <Navbar user={user}></Navbar>
             <DropdownButton gameList={gameList} selectedGame={selectedGame} setSelectedGame={setSelectedGame}></DropdownButton>
-            <div style={{display: 'flex'}}>
+
+            <div className="tabs">
+                <button
+                className={`tab ${activeTab === "tab1" ? "active" : ""}`}
+                onClick={() => handleTabClick("tab1")}
+                >
+                Prize Data
+                </button>
+                <button
+                className={`tab ${activeTab === "tab2" ? "active" : ""}`}
+                onClick={() => handleTabClick("tab2")}
+                >
+                Chart
+                </button>
+            </div>
+            <div className='desktop-elements' style={{display: 'flex'}}>
                 <DataTable filteredDataList={filteredDataList}></DataTable>
                 <Chart filteredDataList={filteredDataList}></Chart>
+            </div>
+
+            <div className="tab-section">
+                {activeTab === "tab1" && (
+                    <div style={{padding: '20px'}}>
+                        <DataTable filteredDataList={filteredDataList}></DataTable>
+                    </div>
+                )}
+                {activeTab === "tab2" && (
+                    <div>
+                        <Chart filteredDataList={filteredDataList}></Chart>
+                    </div>
+                )}
             </div>
         </div>
       );

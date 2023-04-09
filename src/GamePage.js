@@ -5,9 +5,13 @@ import { useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
 import GameCard from './GameCard';
 import { Button, Typography } from 'antd'
-
+import ProPlanButton from './ProPlanButton'
 import { v4 as uuidv4 } from 'uuid';
-
+import { FirebaseAppProvider } from 'reactfire';
+import { app } from './firebase-config'
+import { SdkProvider } from 'reactfire';
+import firebase from 'firebase/app';
+import ManagePlanButton from './ManagePlanButton';
 export default function GamePage({user}) {
     const [gameArray, setGameArray] = useState([])
     const gamesCollectionRef = collection(db, 'games')
@@ -67,6 +71,10 @@ export default function GamePage({user}) {
                     })}
                 </div>
             </div>
+      {/* Your component tree goes here */}
+
+        <ProPlanButton user={user} />
+        <ManagePlanButton user={user}></ManagePlanButton>
         </div>
     )
 }

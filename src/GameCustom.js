@@ -133,27 +133,6 @@ export default function GameCustom({user}) {
       <div className="desktop-elements">
         <div class="section1">
             {gameData ? <GameInfo user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
-            {/* <Typography.Title level={2} style={{ margin: 0 }}>
-                Form Field Customization
-            </Typography.Title>
-            <br></br>
-
-            <Typography.Title level={3} style={{ margin: 0 }}>
-                Game Name
-            </Typography.Title>
-            {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>}
-            <br></br>
-
-            <Typography.Title level={3} style={{ margin: 0 }}>
-                Game Form Fields
-            </Typography.Title>
-            {gameData ? <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields> : <p>Loading...</p>}
-            <br></br>
-            
-            <Typography.Title level={3} style={{ margin: 0 }}>
-                QR Code
-            </Typography.Title>
-            {gameData ? <Settings gameData={gameData}/> : <p>Loading...</p>} */}
         </div>
         <div class="section2">
 

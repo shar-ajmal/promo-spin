@@ -1,14 +1,31 @@
 import { useState, useEffect } from "react"
+import { Space, Table, Tag } from 'antd';
 
 export default function DataTable({filteredDataList}){
 
     const [prizeData, setPrizeData] = useState([])
+
+    const prizeTableKeys = [
+        {
+            title: 'Prize', 
+            dataIndex: 'prizeName', 
+            key: 'prizeName',
+        },
+        {
+            title: 'Count', 
+            dataIndex: 'prizeCount', 
+            key: 'prizeCount',
+        }
+    ];
 
     useEffect(() => {
         if (filteredDataList != undefined) {
             console.log("Inside chart component")
             console.log(filteredDataList)
             var groupedData = groupPrizeData(filteredDataList)
+            console.log("viewing price data")
+            console.log(prizeTableKeys)
+            console.log(groupedData)
             setPrizeData(groupedData)
         }
     }, [filteredDataList])
@@ -51,27 +68,9 @@ export default function DataTable({filteredDataList}){
     }
 
     return (
-        <div className="chart-page-element">
+        <div className="chart-page-element margin-20">
             <h2>Prize Table</h2>
-            <table class=" email-table prize-data-table">
-                <tr>
-                    <th>Prize Name</th>
-                    <th>Count</th>
-                </tr>
-                {console.log("viewing prize info")}
-                {console.log(prizeData)}
-                {prizeData.map((element, index) => { return (
-                    <tr>
-                        <td>
-                            {element['prizeName']}
-                        </td>
-                        <td>
-                            {element['prizeCount']}
-                        </td>
-                    </tr>
-                )
-                })}
-            </table>
+            <Table columns={prizeTableKeys} dataSource={prizeData}></Table>
         </div>
     )
 }

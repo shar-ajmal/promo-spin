@@ -70,7 +70,7 @@
     }
   
     .desktop-elements {
-      display: none;
+      display: none !important;
     }
   }
   

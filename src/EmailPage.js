@@ -8,7 +8,7 @@ import Navbar from "./Navbar";
 import DropdownButton from "./DropdownButton";
 import EmailList from "./EmailList";
 
-import standardizeData from "./firebase-config";
+import { standardizeData } from "./firebase-config"
 import {Button} from 'antd';
 export default function EmailPage({user}) {
     const [filteredEmailList, setFilteredEmailList] = useState()
