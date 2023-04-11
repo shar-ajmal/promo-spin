@@ -17,8 +17,9 @@ export default function DataTable({filteredDataList}){
             key: 'prizeCount',
         }
     ];
-
+    
     useEffect(() => {
+        console.log("In the data table with the filtered data list", filteredDataList)
         if (filteredDataList != undefined) {
             console.log("Inside chart component")
             console.log(filteredDataList)

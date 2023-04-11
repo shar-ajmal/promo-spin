@@ -10,6 +10,8 @@ import EmailList from "./EmailList";
 
 import { standardizeData } from "./firebase-config"
 import {Button} from 'antd';
+import { getCustomClaimRole } from './firebase-config';
+
 export default function EmailPage({user}) {
     const [filteredEmailList, setFilteredEmailList] = useState()
     const [globalEmailList, setGlobalEmailList] = useState([])
@@ -17,12 +19,21 @@ export default function EmailPage({user}) {
     const navigate = useNavigate();
     const [selectedGame, setSelectedGame] = useState('')
     const [hideGames, setHideGames] = useState(false)
+    const [role, setRole] =  useState([])
+
 
     const collectedInfoRef = collection(db, 'collected_info');
     const gamesCollectionRef = collection(db, 'games');
 
     const handleBack = () => {
         navigate('/')
+    }
+
+    async function getRole() {
+        console.log("ROLE")
+        const value = await getCustomClaimRole();
+        console.log(value)
+        setRole(value)
     }
 
     useEffect(() => {
@@ -41,21 +52,35 @@ export default function EmailPage({user}) {
     }, [selectedGame])
 
     useEffect(() => {
+        getRole()
+    }, [])
+
+    useEffect(() => {
         
         setSelectedGame({'game_name':'All Games', 'game_id': 1})
         getGameData()
-    }, [hideGames]);
+    }, [role]);
 
     const getEmailData = async(tempGameList) => {
         console.log("Getting email data")
-        console.log(tempGameList)
-        if (tempGameList.length > 0) {
-            let data =  await getDocs(query(collectedInfoRef, where("user_id", "==", user.uid)));
+        var gameIdList = []
+        console.log("getting game id list")
+        tempGameList.map((element) => {
+            if (element)
+            gameIdList.push(element['game_id'])
+        })
+
+        console.log(gameIdList)
+        
+        if (gameIdList.length > 0) {
+            
+            let data =  role == "pro" ? await getDocs(query(collectedInfoRef, where("user_id", "==", user.uid))): await getDocs(query(collectedInfoRef, where("user_id", "==", user.uid), where("game_id", "in", gameIdList)));
             setGlobalEmailList(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
             console.log("Collecting email info")
+            console.log(user.uid)
+            console.log(gameIdList)
             console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
             setFilteredEmailList(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-
         }
     }
 
@@ -68,21 +93,23 @@ export default function EmailPage({user}) {
 
         var tempGameList = [{'game_name': 'All Games', 'game_id': 1}]
         gameData.forEach((element) => {
-            if (hideGames){
-                if (element.game_enabled) {
-                    tempGameList.push({
-                        'game_name': element.game_name, 
-                        'game_id': element.game_id
-                    })
-                }
-            }
-            else {
+            if (element.game_enabled) {
                 tempGameList.push({
                     'game_name': element.game_name, 
                     'game_id': element.game_id
                 })
             }
         })
+
+        console.log("Looking at get gamedata function")
+        console.log(role)
+        console.log(tempGameList)
+
+        if (role != "pro") {
+            if (tempGameList.length != 0) {
+                tempGameList = [tempGameList[0], tempGameList[1]]
+            }
+        }
 
         console.log("printing tempGameList")
         console.log(tempGameList)

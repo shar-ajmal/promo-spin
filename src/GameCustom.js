@@ -104,11 +104,7 @@ export default function GameCustom({user}) {
         }
 
     }
-
-    // const handleBack = (page) => {
-    //     navigate(page)
-    // }
-
+    
   return (
     <div className="screen-with-tabs">
         <Navbar user={user}/>

@@ -1,45 +1,22 @@
 import React from 'react';
 import { loadStripe } from '@stripe/stripe-js';
+import { useState } from 'react';
 import { doc, collection, addDoc } from "firebase/firestore";
 import { createCheckoutSession } from "./createCheckoutSession";
+import {Button} from 'antd'
 console.log("Logging stripe key")
 console.log(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY)
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 export default function ProPlanButton({user, plan}) {
+  const [loading, setLoading] = useState(false)
 
-//   const handleUpgradeClick = async () => {
-//     const stripe = await stripePromise;
-
-
-//     // Get a reference to the subcollection
-// const subcollectionRef = collection(db, 'stripe', user.uid, 'checkout_sessions');
-
-// // Create a new document within the subcollection
-// const sessionRef = doc(subcollectionRef);
-// const sessionData = {
-//   price: 'price id',
-//   success_url: 'https://localhost:3000/success',
-//   cancel_url: 'https://localhost:3000/fail',
-// };
-// const session = await addDoc(sessionRef, sessionData);
-
-//     // Redirect the user to the Stripe Checkout page
-//     const result = await stripe.redirectToCheckout({
-//       sessionId: session.id,
-//     });
-
-//     // Handle the result of the Stripe Checkout session
-//     if (result.error) {
-//       console.error(result.error.message);
-//       // Show an error message to the user
-//     } else {
-//       // Show a success message to the user
-//       console.log("Success!")
-//     }
-//   };
-
+  function handleClick() {
+    setLoading(true)
+  }
   return (
-    <button onClick={() =>createCheckoutSession(user.uid)}>Upgrade to Premium</button>
+    <Button type="primary" onClick={() =>{createCheckoutSession(user.uid); handleClick();}}>
+      {loading ? "Loading..." : "Upgrade to Pro"}
+    </Button>
   );
 }

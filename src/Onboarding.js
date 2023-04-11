@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { db } from './firebase-config';
 import { collection, getDocs, query, where, doc, updateDoc } from 'firebase/firestore'
 
-const OnboardingModal = ({ setDisplayOnboarding, user }) => {
+const OnboardingModal = ({ user, setShowOnboarding }) => {
   const handleNext = () => {
     setStep(prevStep => prevStep + 1);
   };
@@ -16,10 +16,28 @@ const OnboardingModal = ({ setDisplayOnboarding, user }) => {
   if (currentStep === 1) {
     content = (
       <>
-        <h3>Step 1/6</h3>
+      <h1>Instructions</h1>
+      <h3>Part 1/7</h3>
+      <h2>Game Dashboard</h2>
+      <div className='onboarding-img-container'>
+        <img className='onboarding-img' src="/gamedashboard.png" alt="Onboarding step 1" />
+      </div>
+      <h5 className='onboarding-h5'>Game Dashboard</h5>
+      <p className='onboarding-p'>Create Games in your game dashboard by clicking the create game button.</p>
+      <h5 className='onboarding-h5'>View & Edit Games</h5>
+      <p className='onboarding-p'>View your games and click on them to edit them.</p>
+    </>
+    )
+    
+  }
+  else if (currentStep === 2) {
+    content = (
+      <>
+        <h1>Instructions</h1>
+        <h3>Part 2/7</h3>
         <h2>Customize Spin Wheel</h2>
         <div className='onboarding-img-container'>
-          <img className='onboarding-img' src="/steps1_6.png" alt="Onboarding step 1" />
+          <img className='onboarding-img' src="/steps1_6.png" alt="Onboarding step 2" />
         </div>
         <h5 className='onboarding-h5'>Add Entries</h5>
         <p className='onboarding-p'>Type in the name and probability of the item. Probabilities must be divisible by 10 or 25. Total probability needs to equal 100.</p>
@@ -28,28 +46,34 @@ const OnboardingModal = ({ setDisplayOnboarding, user }) => {
         <h5 className='onboarding-h5'>Save Entries</h5>
         <p className='onboarding-p'>To save your changes to the wheel, click save.</p>
       </>
+
+      
     );
-  } else if (currentStep === 2) {
+  } else if (currentStep === 3) {
     content = (
       <>
-        <h3>Step 2/6</h3>
-        <h2>Add Your Business Name</h2>
+      <h1>Instructions</h1>
+        <h3>Step 3/7</h3>
+        <h2>Customize Your Form</h2>
         <div className='onboarding-img-container'>
-          <img className='onboarding-img'  src="/steps2_6.png" alt="Onboarding step 1" />
+          <img className='onboarding-img'  src="/steps2_6.png" alt="Onboarding step 3" />
         </div>
-        <h5 className='onboarding-h5'>Add Business Name</h5>
-        <p className='onboarding-p'>Go to the info tab and type in your business name. This Name will apper on your spin wheel.</p>
+        <h5 className='onboarding-h5'>Add A Game Name</h5>
+        <p className='onboarding-p'>Add your game name so that users who scan the QR code will see your game name.</p>
+        <h5 className='onboarding-h5'>Customize Form Fields</h5>
+        <p className='onboarding-p'>Customize your form and add fields, such as name, phone number, or anything else you want to collect from users when they scan your QR Code.</p>
       </>
     );
   } // Add additional steps as needed
 
-  else if (currentStep === 3) {
+  else if (currentStep === 4) {
     content = (
       <>
-        <h3>Step 3/6</h3>
+      <h1>Instructions</h1>
+        <h3>Step 4/7</h3>
         <h2>QR Code</h2>
         <div className='onboarding-img-container'>
-          <img className='onboarding-img'  src="/steps3_6.png" alt="Onboarding step 1" />
+          <img className='onboarding-img'  src="/steps3_6.png" alt="Onboarding step 4" />
         </div>
         <h5 className='onboarding-h5'>QR Code</h5>
         <p className='onboarding-p'>A QR code will be generated that clients can scan to access your user for and spin your wheel.</p>
@@ -59,13 +83,14 @@ const OnboardingModal = ({ setDisplayOnboarding, user }) => {
     );
   } // Add additional steps as needed
 
-  else if (currentStep === 4) {
+  else if (currentStep === 5) {
     content = (
       <>
-        <h3>Step 4/6</h3>
+      <h1>Instructions</h1>
+        <h3>Step 5/7</h3>
         <h2>Collected Emails</h2>
         <div className='onboarding-img-container'>
-          <img className='onboarding-img'  src="/steps4_6.png" alt="Onboarding step 1" />
+          <img className='onboarding-img'  src="/steps4_6.png" alt="Onboarding step 5" />
         </div>
         <h5 className='onboarding-h5'>View Collected Emails</h5>
         <p className='onboarding-p'>Go on the email tab and view the emails you have collected via your user form.</p>
@@ -75,13 +100,14 @@ const OnboardingModal = ({ setDisplayOnboarding, user }) => {
     );
   } // Add additional steps as needed
 
-  else if (currentStep === 5) {
+  else if (currentStep === 6) {
     content = (
       <>
-        <h3>Step 5/6</h3>
+      <h1>Instructions</h1>
+        <h3>Step 6/7</h3>
         <h2>Analytics</h2>
         <div className='onboarding-img-container'>
-          <img className='onboarding-img'  src="/steps5_6.png" alt="Onboarding step 1" />
+          <img className='onboarding-img'  src="/steps5_6.png" alt="Onboarding step 6" />
         </div>
         <h5 className='onboarding-h5'>View Data</h5>
         <p className='onboarding-p'>Click on the charts tab and view the number of emails you have collected over time.</p>
@@ -89,24 +115,25 @@ const OnboardingModal = ({ setDisplayOnboarding, user }) => {
     );
   } // Add additional steps as needed
 
-  else if (currentStep === 6) {
+  else if (currentStep === 7) {
     content = (
       <>
-        <h3>Step 6/6</h3>
+      <h1>Instructions</h1>
+        <h3>Step 7/7</h3>
         <h2>User Form</h2>
         <div className='onboarding-img-container'>
-          <img className='onboarding-img'  src="/steps6_6.png" alt="Onboarding step 1" />
+          <img className='onboarding-img'  src="/steps6_6.png" alt="Onboarding step 7" />
         </div>
         <h5 className='onboarding-h5'>View User Form</h5>
-        <p className='onboarding-p'>The user form will be what the client sees when they scan your QR code. View what they'll see by clicking on the User Form tab.</p>
+        <p className='onboarding-p'>Scan your QR code to see the form that your users will see. Feel free to test it out by filling it out yourself.</p>
         <h5 className='onboarding-h5'>Email Confirmation</h5>
         <p className='onboarding-p'>An email will be sent to the client with they prize they've won. Ask the client to show you the email for proof that they typed it in.</p>
       </>
     );
   } // Add additional steps as needed
 
-  if (currentStep === 7) {
-    setDisplayOnboarding(false)
+  if (currentStep === 8) {
+    setShowOnboarding(false)
       getDocs(query(userCollectionRef, where("user_id", "==", user.uid))).then((res) => {
         console.log("hello world!")
         console.log(res.docs[0].id)

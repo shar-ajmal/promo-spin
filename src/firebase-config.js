@@ -36,9 +36,6 @@ export const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const storage = getStorage(app);
-
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
@@ -49,6 +46,12 @@ const googleProvider = new GoogleAuthProvider();
 //   const storageRef = ref(storage, `/QRCode/${userId}`)
 //   uploadBytes(storageRef, file).then(() => {console.log("img uploaded")});
 // }
+
+export async function getCustomClaimRole() {
+  await auth.currentUser.getIdToken(true);
+  const decodedToken = await auth.currentUser.getIdTokenResult();
+  return decodedToken.claims.stripeRole;
+}
 
 const generateQRCode = (userId) => {
   console.log("In gen qr code")

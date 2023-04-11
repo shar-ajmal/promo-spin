@@ -35,21 +35,11 @@ export default function GameCard({gameInfo}) {
         let numDocs = data.size;
         setNumInfoCollected(numDocs)
     }
-
-    // return (
-    //     <div className="card-container">
-    //         <div className="card-name">
-    //             {gameName}
-    //         </div>
-    //         <div className="card-bottom">
-    //             <button onClick={() => redirect(gameId)} >ViewGame</button>
-    //         </div>
-    //     </div>
-    // )
+    
     return (
             <div className="card-container">
                 <Card title={gameName} hoverable={true} onClick={() => redirect(gameId)}>
-                    <Text>Info Collected: {numInfoCollected}</Text>
+                    <Text>Sign-Ups: {numInfoCollected}</Text>
                 </Card>
             </div>
             

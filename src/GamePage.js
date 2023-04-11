@@ -5,21 +5,28 @@ import { useNavigate } from "react-router-dom";
 import Navbar from './Navbar';
 import GameCard from './GameCard';
 import { Button, Typography } from 'antd'
-import ProPlanButton from './ProPlanButton'
 import { v4 as uuidv4 } from 'uuid';
-import { FirebaseAppProvider } from 'reactfire';
-import { app } from './firebase-config'
-import { SdkProvider } from 'reactfire';
-import firebase from 'firebase/app';
-import ManagePlanButton from './ManagePlanButton';
+import { getCustomClaimRole } from './firebase-config';
 export default function GamePage({user}) {
     const [gameArray, setGameArray] = useState([])
+    const [role, setRole] =  useState([])
     const gamesCollectionRef = collection(db, 'games')
     const navigate = useNavigate();
 
+    async function getRole() {
+        console.log("ROLE")
+        const value = await getCustomClaimRole();
+        console.log(value)
+        setRole(value)
+    }
+
+    useEffect(() => {
+        getRole()
+    }, [])
+
     useEffect(() => {
         getGameData()
-    }, [])
+    }, [role])
 
     const getGameData = async() => {
         console.log("getting user dt")
@@ -28,7 +35,19 @@ export default function GamePage({user}) {
         console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
         var gameList = data.docs.map((doc) => ({...doc.data(), id:doc.id}))
         var enabledGameList = gameList.filter(game => game.game_enabled || game.game_enabled === undefined)
-        setGameArray(enabledGameList)
+        console.log("Game Role")
+        console.log(enabledGameList)
+        console.log(role)
+        if (role === "pro") {
+            setGameArray(enabledGameList)
+        }
+        else{
+            if (enabledGameList.length != 0) {
+                var newGameList = [enabledGameList[0]]
+                setGameArray(newGameList)
+            }
+        }
+        
     }
 
     const redirect = (gameId) => {
@@ -37,20 +56,27 @@ export default function GamePage({user}) {
     }
 
     function createGame() {
-        const newGameId = uuidv4()
-        const qrCodeString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://promo-spin-staging.web.app/spin/' + newGameId +'&size=200x200&format=png'
-        addDoc(gamesCollectionRef, {
-            'user_id': user.uid, 
-            'game_id': newGameId, 
-            'game_name': '[NEW GAME]', 
-            'form_fields': [{'fieldName': 'email', 'deletable': false, 'fieldId': 1}],
-            'wheel_fields': [{'name': 'item1', 'probability': 50, 'id': uuidv4()}, {'name': 'item2', 'probability': 50, 'id': uuidv4()}],
-            'qr_code': qrCodeString, 
-            'game_enabled': true
-        })
+        console.log("Getting role")
+        console.log(role)
+        if (role === 'pro') {
+            const newGameId = uuidv4()
+            const qrCodeString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://promo-spin-staging.web.app/spin/' + newGameId +'&size=200x200&format=png'
+            addDoc(gamesCollectionRef, {
+                'user_id': user.uid, 
+                'game_id': newGameId, 
+                'game_name': '[NEW GAME]', 
+                'form_fields': [{'fieldName': 'email', 'deletable': false, 'fieldId': 1}],
+                'wheel_fields': [{'name': 'item1', 'probability': 50, 'id': uuidv4()}, {'name': 'item2', 'probability': 50, 'id': uuidv4()}],
+                'qr_code': qrCodeString, 
+                'game_enabled': true
+            })
 
-        const gameUrl = "/game/" + newGameId
-        navigate(gameUrl)
+            const gameUrl = "/game/" + newGameId
+            navigate(gameUrl)
+        }
+        else {
+            alert("Upgrade your plan to pro to create new games!")
+        }
     }
 
     return (
@@ -71,10 +97,6 @@ export default function GamePage({user}) {
                     })}
                 </div>
             </div>
-      {/* Your component tree goes here */}
-
-        <ProPlanButton user={user} />
-        <ManagePlanButton user={user}></ManagePlanButton>
         </div>
     )
 }
