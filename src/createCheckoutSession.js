@@ -28,8 +28,8 @@ export async function createCheckoutSession(uid) {
   const { id: checkoutSessionId } = await addDoc(sessionRef, {
     // replace the price_XXX value with the correct value from your product in stripe.
     price: "price_1MtdiVAFJ9qTOX9QC38xlXRZ",
-    success_url: 'http://localhost:3000/',
-    cancel_url: 'http://localhost:3000/',
+    success_url: 'https://promo-spin-staging.web.app/',
+    cancel_url: 'https://promo-spin-staging.web.app/',
   });
 
   const checkoutSessionRef = doc(sessionRef, checkoutSessionId);
@@ -55,7 +55,7 @@ export function sendToCustomerPortal(uid) {
     const createPortalLink = httpsCallable(functions, 'ext-firestore-stripe-payments-createPortalLink');
 
         // Call the function
-    createPortalLink({ returnUrl: 'http://localhost:3000/' })
+    createPortalLink({ returnUrl: 'https://promo-spin-staging.web.app/' })
     .then((result) => {
         window.location.assign(result.data.url);
     })
