@@ -4,10 +4,12 @@ import { async } from '@firebase/util';
 import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/firestore'
 import emailjs from '@emailjs/browser';
 import NavbarUserForm from './NavbarUserForm'
+import { getCustomClaimRole } from './firebase-config';
 
 export default function UserForm({gameData, userId, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
-    const userCollectionRef = collection(db, 'users')
+    const [role, setRole] = useState("")
+    const freePlanLimit = 2;
 
     console.log("in user form")
     console.log(userId)
@@ -22,6 +24,17 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
 
     const form = useRef();
     const didMount = useRef(false);
+
+    async function getRole() {
+        console.log("ROLE")
+        const value = await getCustomClaimRole();
+        console.log(value)
+        setRole(value)
+    }
+
+    useEffect(() => {
+        getRole()
+    }, [])
 
     useEffect(() => {
         console.log("Inside the user form")
@@ -53,13 +66,21 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
             alert("Please Enter Email Address")
             return
         }
+        const allDocRefs = await getDocs(query(collectedInfoRef, where("game_id", "==", gameData.game_id)));
+
+        console.log("printing doc ref size", allDocRefs.size)
+
+        if (role != "pro" && allDocRefs.size >= freePlanLimit) {
+            alert ("Business owner needs to upgrade plan! Email Limit Hit!")
+            return;
+        }
         const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
-        
+    
         if (qSnap.size) {
             alert("email alredy exists!")
-          } else {
+        } else {
             submitInfo()
-          }
+        }
     }
 
     function submitInfo() {
@@ -100,8 +121,8 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         const allFields = {...sendFields}
         allFields['item_name'] = selectedItem
         allFields['game_name'] = gameData['game_name']
-
-        emailjs.send('service_5fq3k6n', 'template_eidfxld', allFields, '_5voPVzogLZi48BMl')
+        console.log(allFields)
+        emailjs.send('service_5fq3k6n', 'template_lv6j86b', allFields, '_5voPVzogLZi48BMl')
           .then((result) => {
               console.log(result.text);
           }, (error) => {
