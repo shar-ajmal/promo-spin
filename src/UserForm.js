@@ -9,7 +9,7 @@ import { getCustomClaimRole } from './firebase-config';
 export default function UserForm({gameData, userId, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
     const [role, setRole] = useState("")
-    const freePlanLimit = 2;
+    const freePlanLimit = 200;
 
     console.log("in user form")
     console.log(userId)

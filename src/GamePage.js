@@ -58,7 +58,7 @@ export default function GamePage({user}) {
     function createGame() {
         console.log("Getting role")
         console.log(role)
-        if (role === 'pro') {
+        if (role === 'pro' || gameArray.length == 0) {
             const newGameId = uuidv4()
             const qrCodeString = 'https://api.qrserver.com/v1/create-qr-code/?data=http://promo-spin-staging.web.app/spin/' + newGameId +'&size=200x200&format=png'
             addDoc(gamesCollectionRef, {
