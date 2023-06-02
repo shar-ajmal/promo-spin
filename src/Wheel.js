@@ -59,6 +59,7 @@ export default class Wheel extends React.Component {
     // console.log(userId)
     return (
       <div>
+        <p className='disclaimer'>By filling this out, you agree to recieve promotional material. Don't worry, we won't spam you. :)</p>
         <div className="wheel-container">
           <div className={`wheel ${spinning}`} style={wheelVars}>
             {items.map((item, index) => (
