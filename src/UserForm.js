@@ -5,10 +5,12 @@ import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/
 import emailjs from '@emailjs/browser';
 import NavbarUserForm from './NavbarUserForm'
 import { getCustomClaimRole } from './firebase-config';
+import { useNavigate } from "react-router-dom";
 
 export default function UserForm({gameData, userId, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
     const [role, setRole] = useState("")
+    const [winEmail, setWinEmail] = useState("")
     const freePlanLimit = 200;
 
     console.log("in user form")
@@ -16,11 +18,9 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
 
     const [sendFields, setSendFields] = useState({'item_name': ''})
 
-    const [gameFields, setGameFields] = useState([])
-
-    const [formFields, setFormFields] = useState([])
-
     const[selectedItem, setSelectedItem] = useState('')
+
+    const winEmailCollectionRef = collection(db, 'win_emails')
 
     const form = useRef();
     const didMount = useRef(false);
@@ -32,9 +32,30 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         setRole(value)
     }
 
+    const getWinEmail = async() => {
+        console.log("Getting the win email")
+        console.log(userId)
+        const data = await getDocs(query(winEmailCollectionRef, where('user_id', '==', gameData.user_id)));
+        console.log("getting data")
+        console.log(data)
+        const doc = data.docs.map((doc) => ({...doc.data(), id:doc.id}))[0]
+        console.log(doc)
+        setWinEmail(doc.text)
+    }
+
+    useEffect(() => {
+        getWinEmail()
+    }, [])
+
     useEffect(() => {
         getRole()
     }, [])
+
+    const navigate = useNavigate();
+
+    const handleBack = (page) => {
+        navigate(page)
+    }
 
     useEffect(() => {
         console.log("Inside the user form")
@@ -76,11 +97,75 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         }
         const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
     
-        if (qSnap.size) {
+        if (false) {
             alert("email alredy exists!")
         } else {
             submitInfo()
         }
+    }
+
+    function modifyWinEmail(spinnedItem) {
+        const winEmailMap = {
+            '{game_name}' : gameData.game_name,
+            '{prize_name}': spinnedItem
+        }
+        console.log(winEmailMap)
+
+        // var winEmail2 = "Thanks for playing with {game_name}. You have won {prize_name}. Show this email to the booasdfasdfth manager to claim your prize! Best Wishes, Shaheryar Ajmal"
+        // var wordArray = winEmail.split(" ")
+
+        const game_name_regex = /{game_name}/g
+        const prize_name_regex = /{prize_name}/g
+        var modifiedString = winEmail.replace(game_name_regex, gameData.game_name)
+        modifiedString = modifiedString.replace(prize_name_regex, spinnedItem)
+
+        console.log(modifiedString)
+
+
+        // for (const key in winEmailMap) {
+        //     const regexString = /key/g
+        //     // const regexString = `/${string}/g`;
+        //     // const regexExpression = new RegExp(regexString.slice(1, -1));
+        //     // regexExpression.lastIndex = 0;
+
+        //     // const regex = new RegExp(key);
+
+        //     console.log("print regex")
+        //     console.log(regexString)
+        //     console.log(winEmailMap[key])
+        //     console.log(winEmail.replace(regexString, winEmailMap[key]))
+        // }
+
+        // for (var i=0; i< wordArray.length; i++) {
+
+        //     var word = wordArray[i]
+        //     // console.log(word.replace(
+        //     //     /{([^}]+)}/g,
+        //     //     (match, placeholder) => winEmailMap[placeholder] || match
+        //     //   ))
+        //     if (word in winEmailMap) {
+        //         console.log("found word")
+        //         console.log(word)
+        //         word = winEmailMap[word]
+        //     }
+        //     wordArray[i] = word
+        // }
+
+        // console.log(wordArray)
+
+        // console.log(wordArray.join(" "))
+
+
+
+        // const replacedTemplate = winEmail.replace(
+        //     /{([^}]+)}/g,
+        //     (match, placeholder) => winEmailMap[placeholder] || match
+        //   );
+
+        //   console.log(replacedTemplate)
+          return
+
+
     }
 
     function submitInfo() {
@@ -118,11 +203,15 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         console.log("in send email")
         console.log(sendFields)
         console.log(selectedItem)
+        const emailText = modifyWinEmail(selectedItem)
         const allFields = {...sendFields}
+        allFields['email_text'] = emailText
         allFields['item_name'] = selectedItem
-        allFields['game_name'] = gameData['game_name']
+        // allFields['user_name']:
+        // allFields['game_name'] = gameData['game_name']
+        console.log("printing out all fields")
         console.log(allFields)
-        emailjs.send('service_5fq3k6n', 'template_lv6j86b', allFields, '_5voPVzogLZi48BMl')
+        emailjs.send('service_5fq3k6n', 'template_eidfxld', allFields, '_5voPVzogLZi48BMl')
           .then((result) => {
               console.log(result.text);
           }, (error) => {
@@ -134,7 +223,15 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
             console.log("in alert")
             console.log(allFields)
             var alertMessage = "You have won "+allFields['item_name']+". An email has been sent to " + allFields['email'] + ". Show the email to claim your prize."
-            if(!alert(alertMessage)){window.location.reload();}
+            // if(!alert(alertMessage)){window.location.reload();}
+
+            console.log("printing string")
+            console.log(allFields['item_name'])
+            const addUnderscores = (str) => str.replace(/ /g, '_');
+
+            const modifiedString = addUnderscores(allFields['item_name']);
+            const resolutionUrl = '/resolution/' + gameData.game_id + '/' + modifiedString
+            handleBack(resolutionUrl)
           }, 2000)
     };
 

@@ -7,21 +7,31 @@ import { Input, Button, Space, Typography } from 'antd';
 import GameName from "./GameName";
 import GameFields from "./GameFields";
 import Settings from "./Settings";
+import SocialFields from "./SocialFields";
 
 import "./gamecustom.css";
 
 export default function GameInfo ({user, gameData}) {
     const [formFields, setFormFields] = useState([])
     const [gameName, setGameName] = useState()
+    const [fbPage, setFBPage] = useState('')
+    const [igHandle, setIGHandle] = useState('')
 
     useEffect(() => {
         setFormFields(gameData.form_fields)
         setGameName(gameData.game_name)
+        if (gameData.ig_handle) {
+            setIGHandle(gameData.ig_handle)
+        }
+        if (gameData.fb_page) {
+            setFBPage(gameData.fb_page)
+        }
     }, [])
 
     function save() {
         saveGameName()
         saveGameFields()
+        saveSocialFields()
     }
 
     const saveButtonStyle = {
@@ -46,6 +56,20 @@ export default function GameInfo ({user, gameData}) {
             const docRef = doc(db, "games", res.docs[0].id);
             console.log(docRef)
             updateDoc(docRef, { 'form_fields': formFields });
+        })
+        if (docRef.empty) {
+            console.log('No matching documents.');
+            return;
+        }
+    }
+
+    const saveSocialFields = async() => {
+        const gamesCollectionRef = collection(db, 'games');
+        const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+        getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+            const docRef = doc(db, "games", res.docs[0].id);
+            console.log(docRef)
+            updateDoc(docRef, { 'ig_handle': igHandle, 'fb_page': fbPage });
         })
         if (docRef.empty) {
             console.log('No matching documents.');
@@ -82,6 +106,11 @@ export default function GameInfo ({user, gameData}) {
             {/* {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>} */}
             {gameData ? <GameName gameName={gameName} setGameName={setGameName} user={user} /> : <p>Loading...</p>}
             <br></br>
+
+            <Typography.Title level={3} style={{ margin: 0 }}>
+                Social Media Links
+            </Typography.Title>
+            {gameData ? <SocialFields fbPage={fbPage} setFBPage={setFBPage} igHandle={igHandle} setIGHandle={setIGHandle} user={user} /> : <p>Loading...</p>}
 
             <Typography.Title level={3} style={{ margin: 0 }}>
                 Game Form Fields

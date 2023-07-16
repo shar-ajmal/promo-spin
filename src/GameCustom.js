@@ -9,7 +9,7 @@ import Navbar from "./Navbar";
 import Settings from "./Settings";
 import GameInfo from "./GameInfo";
 
-import { collection, getDocs, query, where, updateDoc, doc } from 'firebase/firestore'
+import { collection, getDocs, addDoc, query, where, updateDoc, doc } from 'firebase/firestore'
 import { constructWheelArray } from './function';
 import { db } from './firebase-config';
 import { useParams } from 'react-router-dom';
@@ -35,6 +35,32 @@ export default function GameCustom({user}) {
 
     const navigate = useNavigate();
 
+    const [winEmail, setWinEmail] = useState(
+      'Thanks for playing with {game_name}. You have won {prize_name}. Show this email to the booth manager to claim your prize!\n\nBest Wishes,\n' + user.name
+  )
+  const winEmailCollectionRef = collection(db, 'win_emails')
+
+
+  //   //Should not belong here but whatever
+  //   useEffect(() => {
+  //     getWinEmail()
+  // }, [])
+
+  const getWinEmail = async() => {
+      console.log("Getting the win email")
+      const data = await getDocs(query(winEmailCollectionRef, where('user_id', '==', user.uid)));
+      if (!data.empty) {
+          console.log("data exists")
+          const doc = data.docs.map((doc) => ({...doc.data(), id:doc.id}))[0]
+          console.log(doc)
+          setWinEmail(doc.text)
+      }
+      else {
+          console.log("data empty")
+          await addDoc(winEmailCollectionRef, {'user_id': user.uid, 'text': winEmail});
+      }
+  }
+
 
     useEffect(() => {
         console.log("Printing user info in custom game page")
@@ -44,6 +70,7 @@ export default function GameCustom({user}) {
         if (user != undefined) {
             getTableData()
             getGameData()
+            getWinEmail()
         }
     }, [])
 

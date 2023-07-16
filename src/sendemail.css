@@ -1,0 +1,18 @@
+.text-area-list {
+    display:flex;
+    justify-content: space-around;
+}
+
+.text-area-container {
+    width: 500px;
+    margin: 20px 0px;
+}
+
+.variable-table {
+    width: 500px;
+    margin: 20px 0px;
+}
+
+.email-description {
+    width: 500px;
+}

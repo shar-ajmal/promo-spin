@@ -25,9 +25,11 @@ import ChartPage from './ChartPage';
 import SignInPage from './SignIn'; 
 import Settings from './Settings';
 import GameCustom from './GameCustom';
+import ResolutionPage from './ResolutionPage';
 
 import './styles.css'
 import GamePage from './GamePage';
+import SendEmails from './SendEmails';
 
 export default function App () {
     const [user, setUser] = useState();
@@ -38,7 +40,8 @@ export default function App () {
       if (userAuth) {
         const user = {
           uid: userAuth.uid,
-          email: userAuth.email
+          email: userAuth.email,
+          name: userAuth.displayName,
         }
         console.log('userAuth', userAuth)
         setUser(user)
@@ -63,11 +66,13 @@ export default function App () {
                 <Route path="/chart" element={<ChartPage user={user}></ChartPage>}/>
                 <Route path="/info" element={<Settings user={user}></Settings>}/>
                 <Route path="/game/:gameId" element={<GameCustom user={user}/>}/>
+                <Route path="/send_email" element={<SendEmails user={user}/>}/>
               </Route>
               <Route element={<PublicRoute user={user}/>}>
                 <Route path="/login" element={<SignInPage user={user}></SignInPage>}/>
               </Route>
               <Route path="/spin/:gameId" element={<SpinPage user={user}/>}/>
+              <Route path="/resolution/:gameId/:wonItem" element={<ResolutionPage user={user}/>}/>
             </Routes>
           </div>
           </html>
