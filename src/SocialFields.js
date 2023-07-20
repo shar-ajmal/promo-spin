@@ -15,7 +15,7 @@ export default function SocialFields ({igHandle, setIGHandle, fbPage, setFBPage,
     return (
         <div>
             <div className="input-container">
-                <Input addonBefore="IG Handle" placeholder='Instagram Account Name, ie: @shaheryarajmal' value={igHandle} onChange={handleIGChange}></Input>
+                <Input addonBefore="IG Handle @" placeholder='Instagram Account Name, ie: shaheryarajmal' value={igHandle} onChange={handleIGChange}></Input>
             </div>
             <div className="input-container">
                 <Input addonBefore="FB Page Link" placeholder='FB Page Link, ie: https://www.facebook.com/Entrepreneur' value={fbPage} onChange={handleFBChange}></Input>

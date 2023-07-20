@@ -238,7 +238,7 @@ export default function SendEmails({user}) {
                         <Table pagination={false} dataSource={dataRoles} columns={columns} />
                     </div>
                 </div>
-                <div>
+                {/* <div>
                     <Typography.Title level={3} style={{ margin: 0 }}>
                         Send Email
                     </Typography.Title>
@@ -250,7 +250,7 @@ export default function SendEmails({user}) {
                         </TextArea>
                     </div>
                     <Button type="primary" onClick={sendEmailtoSubscribers}>Send Email</Button>
-                </div>
+                </div> */}
             </div>
         </div>
     )

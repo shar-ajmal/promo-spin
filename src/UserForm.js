@@ -11,14 +11,14 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
     const collectedInfoRef = collection(db, 'collected_info')
     const [role, setRole] = useState("")
     const [winEmail, setWinEmail] = useState("")
-    const freePlanLimit = 200;
+    const freePlanLimit = 20;
 
     console.log("in user form")
     console.log(userId)
 
     const [sendFields, setSendFields] = useState({'item_name': ''})
 
-    const[selectedItem, setSelectedItem] = useState('')
+    const[selectedItem, setSelectedItem] = useState(null)
 
     const winEmailCollectionRef = collection(db, 'win_emails')
 
@@ -70,14 +70,16 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
     }, [])
 
     useEffect(() => {
-        if ( !didMount.current || selectedItem['item_name'] === "" ) {
-            console.log("Exiting")
-            didMount.current = true;
-            return;
-        }
+        // if ( !didMount.current || selectedItem['item_name'] === "" ) {
+        //     console.log("Exiting")
+        //     didMount.current = true;
+        //     return;
+        // }
         console.log("USE EFFECT")
         console.log(selectedItem)
-        sendEmail()
+        if (selectedItem) {
+            sendEmail()
+        }
     }, [selectedItem])
 
     const handleSubmit = async(e) => {
@@ -97,7 +99,7 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         }
         const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
     
-        if (false) {
+        if (!qSnap.empty) {
             alert("email alredy exists!")
         } else {
             submitInfo()
@@ -120,6 +122,8 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         modifiedString = modifiedString.replace(prize_name_regex, spinnedItem)
 
         console.log(modifiedString)
+
+        return modifiedString
 
 
         // for (const key in winEmailMap) {
@@ -163,8 +167,6 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         //   );
 
         //   console.log(replacedTemplate)
-          return
-
 
     }
 
@@ -205,13 +207,14 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         console.log(selectedItem)
         const emailText = modifyWinEmail(selectedItem)
         const allFields = {...sendFields}
-        allFields['email_text'] = emailText
+        allFields['send_email'] = emailText
         allFields['item_name'] = selectedItem
+        allFields['send_to_email'] =  sendFields['email']
         // allFields['user_name']:
-        // allFields['game_name'] = gameData['game_name']
+        allFields['game_name'] = gameData['game_name']
         console.log("printing out all fields")
         console.log(allFields)
-        emailjs.send('service_5fq3k6n', 'template_eidfxld', allFields, '_5voPVzogLZi48BMl')
+        emailjs.send('service_5fq3k6n', 'template_ogzj6u8', allFields, '_5voPVzogLZi48BMl')
           .then((result) => {
               console.log(result.text);
           }, (error) => {
