@@ -75,8 +75,14 @@ export default function ChartPage({user}) {
         })
 
         if (role != "pro") {
+            console.log("We here again")
             if (tempGameList.length != 0) {
-                tempGameList = [tempGameList[0], tempGameList[1]]
+                if (tempGameList.length > 1) {
+                    tempGameList = [tempGameList[0], tempGameList[1]]
+                }
+                else {
+                    tempGameList = [tempGameList[0]]
+                }
             }
         }
 
