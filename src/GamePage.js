@@ -85,6 +85,15 @@ export default function GamePage({user}) {
             <Typography.Title level={1} style={{ margin: 0 }}>
                 Game Dashboard
             </Typography.Title>
+            {role != "pro" ? <div>
+                <Typography.Title level={5} style={{ margin: 0 }}>
+                Upgrade plan to pro plan for unlimited emails and game creation. 
+            </Typography.Title>
+            <Typography.Title level={5} style={{ margin: 0 }}>
+               Free plan only allows you to collect 20 emails. 
+            </Typography.Title>
+            </div> : <div></div>
+            }
             <div class="top-button-container">
                 <Button type='primary' onClick={createGame} size='large'>Create New Game +</Button>
             </div>

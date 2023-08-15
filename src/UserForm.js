@@ -11,7 +11,7 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
     const collectedInfoRef = collection(db, 'collected_info')
     const [role, setRole] = useState("")
     const [winEmail, setWinEmail] = useState("")
-    const freePlanLimit = 20;
+    const freePlanLimit = 150;
 
     console.log("in user form")
     console.log(userId)
@@ -89,21 +89,21 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
             alert("Please Enter Email Address")
             return
         }
-        const allDocRefs = await getDocs(query(collectedInfoRef, where("game_id", "==", gameData.game_id)));
+        // const allDocRefs = await getDocs(query(collectedInfoRef, where("game_id", "==", gameData.game_id)));
 
-        console.log("printing doc ref size", allDocRefs.size)
+        // console.log("printing doc ref size", allDocRefs.size)
 
-        if (role != "pro" && allDocRefs.size >= freePlanLimit) {
-            alert ("Business owner needs to upgrade plan! Email Limit Hit!")
-            return;
-        }
-        const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
-    
-        if (!qSnap.empty) {
-            alert("email alredy exists!")
-        } else {
-            submitInfo()
-        }
+        // if (role != "pro" && allDocRefs.size >= freePlanLimit) {
+        //     alert ("Business owner needs to upgrade plan! Email Limit Hit!")
+        //     return;
+        // }
+        // const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
+        submitInfo()
+        // if (!qSnap.empty) {
+        //     alert("email alredy exists!")
+        // } else {
+        //     submitInfo()
+        // }
     }
 
     function modifyWinEmail(spinnedItem) {

@@ -27,7 +27,7 @@ export async function createCheckoutSession(uid) {
 
   const { id: checkoutSessionId } = await addDoc(sessionRef, {
     // replace the price_XXX value with the correct value from your product in stripe.
-    price: "price_1MtdiVAFJ9qTOX9QC38xlXRZ",
+    price: "price_1NWA7LAFJ9qTOX9QEuFmBfbK",
     success_url: 'https://promo-spin-staging.web.app/',
     cancel_url: 'https://promo-spin-staging.web.app/',
   });

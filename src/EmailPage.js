@@ -92,8 +92,13 @@ export default function EmailPage({user}) {
         var gameData = data.docs.map((doc) => ({...doc.data(), id:doc.id}))
 
         var tempGameList = [{'game_name': 'All Games', 'game_id': 1}]
+        console.log("printing temp data game list")
+        console.log(tempGameList)
         gameData.forEach((element) => {
+            console.log("going into each element")
+            console.log(element)
             if (element.game_enabled) {
+                console.log("we pushing baby")
                 tempGameList.push({
                     'game_name': element.game_name, 
                     'game_id': element.game_id
@@ -107,7 +112,12 @@ export default function EmailPage({user}) {
 
         if (role != "pro") {
             if (tempGameList.length != 0) {
-                tempGameList = [tempGameList[0], tempGameList[1]]
+                if (tempGameList.length > 1) {
+                    tempGameList = [tempGameList[0], tempGameList[1]]
+                }
+                else {
+                    tempGameList = [tempGameList[0]]
+                }
             }
         }
 

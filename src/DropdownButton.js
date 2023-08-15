@@ -23,11 +23,17 @@ function DropdownButton({gameList, selectedGame, setSelectedGame}) {
         {selectedGame.game_name}
       </button>
       <div className={`dropdown-menu ${toggleShow ? "show" : ""}`}>
-        {gameList.map((option) => (
+        {console.log("We here")}
+        {console.log(gameList)}
+        {gameList ? 
+        gameList.map((option) => (
           <button key={option} className="dropdown-item" onClick={() => handleOptionClick(option)}>
             {option.game_name}
           </button>
-        ))}
+        ))
+        :
+        <div></div>
+      }
       </div>
     </div>
   );
