@@ -16,6 +16,7 @@ export default function GamePage({user}) {
     async function getRole() {
         console.log("ROLE")
         const value = await getCustomClaimRole();
+        console.log("Printing role and value")
         console.log(value)
         setRole(value)
     }

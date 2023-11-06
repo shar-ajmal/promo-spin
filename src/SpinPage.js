@@ -13,6 +13,8 @@ export default function SpinPage() {
     const [wheelElements, setWheelElements] = useState()
     const [busName, setBusName] = useState()
     const [gameData, setGameData] = useState([])
+    const [apothec, setApothec] = useState(false)
+    const [userId, setUserId] = useState('')
 
     // const busNameCollectionRef = collection(db, 'busName')
     const userCollectionRef = collection(db, 'users')
@@ -32,10 +34,20 @@ export default function SpinPage() {
         }
     }, [])
 
+    // useEffect(() => {
+    //     setApothec(true)
+    //     console.log("Printing game data apothec")
+    //     console.log(gameData.user_id)
+    // }, [gameData])
+
     const getGameData = async() => {
         let data = await getDocs(query(gamesCollectionRef, where("game_id", "==", gameId)));
         console.log("Game elements")
         console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+        var dataClean = data.docs.map((doc) => ({...doc.data(), id:doc.id}))[0]
+        if (dataClean.user_id == "Su5PLb3DQeOsRWbqfAFB6Bl8D6F2") {
+            setApothec(true)
+        }
         setGameData(data.docs.map((doc) => ({...doc.data(), id:doc.id}))[0])
         var wheelArray = constructWheelArray(data.docs.map((doc) => doc.data().wheel_fields)[0])
         setWheelElements(wheelArray)
@@ -67,10 +79,8 @@ export default function SpinPage() {
     if(wheelElements != undefined) {
         return (
             <div>
-                <NavbarUserForm busName={gameData.game_name}></NavbarUserForm>
-                <Wheel gameId={gameId} gameData={gameData}  wheelElements={wheelElements} selectedItem={selectedItem}/> 
-                {/* <UserForm wheelElements={wheelElements} selectItemIndex={selectItemIndex}></UserForm> */}
-                {/* <button onClick={selectItemIndex}>test</button> */}
+                <NavbarUserForm apothec={apothec} busName={gameData.game_name}></NavbarUserForm>
+                <Wheel apothec={apothec} gameId={gameId} gameData={gameData}  wheelElements={wheelElements} selectedItem={selectedItem}/> 
             </div>
         )
     }

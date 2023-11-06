@@ -8,14 +8,16 @@ import GameName from "./GameName";
 import GameFields from "./GameFields";
 import Settings from "./Settings";
 import SocialFields from "./SocialFields";
+import GameColors from "./GameColors";
 
 import "./gamecustom.css";
 
-export default function GameInfo ({user, gameData}) {
+export default function GameInfo ({user, gameData, textColor, wheelColor, setWheelColor, setTextColor}) {
     const [formFields, setFormFields] = useState([])
     const [gameName, setGameName] = useState()
     const [fbPage, setFBPage] = useState('')
     const [igHandle, setIGHandle] = useState('')
+
 
     useEffect(() => {
         setFormFields(gameData.form_fields)
@@ -106,6 +108,11 @@ export default function GameInfo ({user, gameData}) {
             {/* {gameData ? <GameName gameData={gameData} user={user} /> : <p>Loading...</p>} */}
             {gameData ? <GameName gameName={gameName} setGameName={setGameName} user={user} /> : <p>Loading...</p>}
             <br></br>
+
+            <Typography.Title level={3} style={{ margin: 0 }}>
+                Game Colors
+            </Typography.Title>
+            {gameData ? <GameColors setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} s/> : <p>Loading...</p>}
 
             <Typography.Title level={3} style={{ margin: 0 }}>
                 Social Media Links

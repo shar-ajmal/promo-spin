@@ -1,20 +1,16 @@
 import {useState, useEffect, useRef} from 'react';
 import {db} from './firebase-config'
-import { async } from '@firebase/util';
 import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/firestore'
 import emailjs from '@emailjs/browser';
-import NavbarUserForm from './NavbarUserForm'
-import { getCustomClaimRole } from './firebase-config';
-import { useNavigate } from "react-router-dom";
 
-export default function UserForm({gameData, userId, wheelElements, selectItem}) {
+export default function UserForm({apothec, widget, setSelectedItemTop, gameData, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
     const [role, setRole] = useState("")
     const [winEmail, setWinEmail] = useState("")
     const freePlanLimit = 150;
 
     console.log("in user form")
-    console.log(userId)
+    // console.log(userId)
 
     const [sendFields, setSendFields] = useState({'item_name': ''})
 
@@ -25,16 +21,16 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
     const form = useRef();
     const didMount = useRef(false);
 
-    async function getRole() {
-        console.log("ROLE")
-        const value = await getCustomClaimRole();
-        console.log(value)
-        setRole(value)
-    }
+    // async function getRole() {
+    //     console.log("ROLE")
+    //     const value = await getCustomClaimRole();
+    //     console.log(value)
+    //     setRole("pro")
+    // }
 
     const getWinEmail = async() => {
         console.log("Getting the win email")
-        console.log(userId)
+        // console.log(userId)
         const data = await getDocs(query(winEmailCollectionRef, where('user_id', '==', gameData.user_id)));
         console.log("getting data")
         console.log(data)
@@ -43,27 +39,31 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         setWinEmail(doc.text)
     }
 
-    useEffect(() => {
-        getWinEmail()
-    }, [])
+    // useEffect(() => {
+    //     if (gameData.length > 0) {
+    //         getWinEmail()
+    //     }
+    // }, [])
 
-    useEffect(() => {
-        getRole()
-    }, [])
+    // useEffect(() => {
+    //     getRole()
+    // }, [])
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
-    const handleBack = (page) => {
-        navigate(page)
-    }
+    // const handleBack = (page) => {
+    //     navigate(page)
+    // }
 
     useEffect(() => {
         console.log("Inside the user form")
         console.log(gameData)
         var formFieldJSON = {}
-        gameData['form_fields'].forEach(element => {
-            formFieldJSON[element['fieldName']] = ''
-        });
+        if (gameData.length >  0) {
+            gameData['form_fields'].forEach(element => {
+                formFieldJSON[element['fieldName']] = ''
+            });
+        }
 
         console.log(formFieldJSON)
         setSendFields(formFieldJSON)
@@ -205,7 +205,9 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         console.log("in send email")
         console.log(sendFields)
         console.log(selectedItem)
-        const emailText = modifyWinEmail(selectedItem)
+        // const emailText = modifyWinEmail(selectedItem)
+        const emailText = ""
+
         const allFields = {...sendFields}
         allFields['send_email'] = emailText
         allFields['item_name'] = selectedItem
@@ -214,7 +216,7 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
         allFields['game_name'] = gameData['game_name']
         console.log("printing out all fields")
         console.log(allFields)
-        emailjs.send('service_5fq3k6n', 'template_ogzj6u8', allFields, '_5voPVzogLZi48BMl')
+        emailjs.send('service_5fq3k6n', 'template_lv6j86b', allFields, '_5voPVzogLZi48BMl')
           .then((result) => {
               console.log(result.text);
           }, (error) => {
@@ -234,7 +236,7 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
 
             const modifiedString = addUnderscores(allFields['item_name']);
             const resolutionUrl = '/resolution/' + gameData.game_id + '/' + modifiedString
-            handleBack(resolutionUrl)
+            widget ? setSelectedItemTop(selectedItem): window.location.href = resolutionUrl;
           }, 2000)
     };
 
@@ -246,9 +248,23 @@ export default function UserForm({gameData, userId, wheelElements, selectItem}) 
 
     return (
         <form class="user-form input-margin">
-            {gameData['form_fields'].map((element, index) => {
-                return <input placeholder={element.fieldName} name={element.fieldName} value={sendFields[element['fieldName']]} onChange={handle_change}/>
-            })}
+            {console.log("loading game data")}
+            {console.log(gameData['form_fields'])}
+            {
+                gameData && Array.isArray(gameData['form_fields']) &&
+                gameData['form_fields'].map((element, index) => {
+                    return (
+                        <input 
+                            key={index}
+                            placeholder={element.fieldName} 
+                            name={element.fieldName} 
+                            value={sendFields[element['fieldName']]} 
+                            onChange={handle_change} 
+                        />
+                    );
+                })
+            }
+
             <button onClick={handleSubmit} type="submit" class="submit-button button-green">Spin</button>
         </form>
     )

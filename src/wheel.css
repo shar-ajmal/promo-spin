@@ -12,6 +12,7 @@
     --nb-turn: 5;
     --spinning-duration: 2s;
     --reset-duration: 0.25s;
+    --text-color: white;
   }
   
   /* Conteneur de la roue = cercle rose extérieur */
@@ -107,7 +108,7 @@
     transform: translateY(-50%) rotate(calc(var(--item-nb) * (360deg / var(--nb-item, 1))));
   
     /* texte */
-    color: var(--neutral-color);
+    color: var(--text-color);
     text-align: right;
     padding: 0 25px 0 50px;
     font-family: var(--wheel-font);

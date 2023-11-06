@@ -24,6 +24,9 @@ export default function GameCustom({user}) {
     const [tableValues, setTableValues] = useState([]);
     const [wheelElements, setWheelElements] = useState([]);
     const [gameName, setGameName] = useState()
+    const [wheelColor, setWheelColor] = useState('')
+    const [textColor, setTextColor] = useState('')
+
 
     const [gameData, setGameData] = useState()
 
@@ -66,6 +69,8 @@ export default function GameCustom({user}) {
         console.log("Printing user info in custom game page")
         console.log(user)
         console.log("done printing user info")
+        setWheelColor("#da3768")
+        setTextColor("#ffffff")
         // setDisplayOnboarding(false)
         if (user != undefined) {
             getTableData()
@@ -155,7 +160,7 @@ export default function GameCustom({user}) {
       </div>
       <div className="desktop-elements">
         <div class="section1">
-            {gameData ? <GameInfo user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+          {gameData ? <GameInfo setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
         </div>
         <div class="section2">
 
@@ -163,19 +168,19 @@ export default function GameCustom({user}) {
                 Spin Wheel Customization
             </Typography.Title>
             <br></br>
-            <SpinWheel wheelElements={wheelElements}/>
+            <SpinWheel wheelElements={wheelElements} wheelColor={wheelColor} textColor={textColor}/>
             {gameData ? <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/> : <p>Loading...</p>}
         </div>
       </div>
         <div className="tab-section">
         {activeTab === "tab1" && (
             <div style={{padding: '20px'}}>
-                {gameData ? <GameInfo user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+                {gameData ? <GameInfo setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
             </div>
         )}
         {activeTab === "tab2" && (
           <div>
-            <SpinWheel wheelElements={wheelElements}/>
+            <SpinWheel wheelElements={wheelElements} wheelColor={wheelColor} textColor={textColor}/>
             <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/>
 
           </div>

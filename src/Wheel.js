@@ -54,12 +54,18 @@ export default class Wheel extends React.Component {
     const spinning = selectedItem !== null ? 'spinning' : '';
     const smallFont = items.length > 10 ? 'small-font' : '';
 
+    if (this.props.apothec) {
+      document.documentElement.style.setProperty('--wheel-color', '#3e5a62');
+    }
+
 
     // console.log("in wheel.js")
     // console.log(userId)
     return (
-      <div>
-        <p className='disclaimer'>By filling this out, you agree to recieve promotional material. Don't worry, we won't spam you. :)</p>
+      <div id='root'>
+        <p className='disclaimer'>
+        We use email and targeted online advertising to send you product and services updates, promotional offers and other marketing communications.
+        </p>
         <div className="wheel-container">
           <div className={`wheel ${spinning}`} style={wheelVars}>
             {items.map((item, index) => (
@@ -69,7 +75,7 @@ export default class Wheel extends React.Component {
             ))}
           </div>
         </div>
-        <UserForm gameData={this.props.gameData} userId={this.props.userId} selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
+        <UserForm widget={this.props.widget} apothec={this.props.apothec} gameData={this.props.gameData} setSelectedItemTop={this.props.setSelectedItemTop} selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
       </div>
     );
   }

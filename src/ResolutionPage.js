@@ -13,6 +13,7 @@ export default function ResolutionPage({user}) {
     const [wonItem, setWonItem] = useState([])
     const [igHandle, setIGHandle] = useState('')
     const [fbPage, setFBPage] = useState('')
+    const [apothec, setApothec] = useState(false)
 
     const params = useParams();
     const gameId = params.gameId;
@@ -35,6 +36,14 @@ export default function ResolutionPage({user}) {
         const wonItem = decodedWonItem.toLowerCase() === 'nothing' ? "Try again next time!" : decodedWonItem ;
         setWonItem(wonItem)
     }, [])
+
+    useEffect(() => {
+      console.log("printing game data in resolution")
+      console.log(gameData.user_id)
+      if(gameData.user_id == "Su5PLb3DQeOsRWbqfAFB6Bl8D6F2") {
+        setApothec(true)
+      }
+    }, [gameData])
 
     function instagramLink() {
         const appURL = 'instagram://user?username=' + igHandle;
@@ -63,6 +72,7 @@ export default function ResolutionPage({user}) {
       const redirectoToFaceBook = () => {
         window.location.href=fbPage
       }
+
       
 
     const getGameData = async() => {
@@ -77,7 +87,7 @@ export default function ResolutionPage({user}) {
     
     return (
         <div>
-            <NavbarUserForm busName={gameData.game_name}>
+            <NavbarUserForm busName={gameData.game_name} apothec={apothec}>
             </NavbarUserForm>
             <div className="won-item">
                 <Typography.Title level={1} style={{ margin: 0, color: 'black' }}>
@@ -92,7 +102,7 @@ export default function ResolutionPage({user}) {
                 <div className="ig-button" onClick={instagramLink}>
                     <img className="ig-logo" src="/ig_logo.webp"/>
                     <div>
-                    <Typography.Title level={5} style={{ margin: 0, color: 'black', paddingLeft: "10px" }}>
+                    <Typography.Title level={5} style={{ margin: 0, color: 'white', paddingLeft: "10px" }}>
                         Follow the journey with @{igHandle}
                     </Typography.Title>
                     </div>

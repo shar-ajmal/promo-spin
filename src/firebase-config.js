@@ -48,8 +48,11 @@ const googleProvider = new GoogleAuthProvider();
 // }
 
 export async function getCustomClaimRole() {
+  console.log("Is this where the error is happening?")
   await auth.currentUser.getIdToken(true);
   const decodedToken = await auth.currentUser.getIdTokenResult();
+  console.log("decoded token")
+  console.log(decodedToken)
   return decodedToken.claims.stripeRole;
 }
 
