@@ -368,6 +368,10 @@
   width: 100%;
 }
 
+.image-preview {
+  width: 50px;
+}
+
 
 /* 
   button {

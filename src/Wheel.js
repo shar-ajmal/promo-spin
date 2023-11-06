@@ -50,6 +50,8 @@ export default class Wheel extends React.Component {
     const wheelVars = {
       '--nb-item': items.length,
       '--selected-item': selectedItem,
+      '--wheel-color': this.props.wheelColor,
+      '--text-color': this.props.textColor,
     };
     const spinning = selectedItem !== null ? 'spinning' : '';
     const smallFont = items.length > 10 ? 'small-font' : '';
@@ -66,7 +68,7 @@ export default class Wheel extends React.Component {
         <p className='disclaimer'>
         We use email and targeted online advertising to send you product and services updates, promotional offers and other marketing communications.
         </p>
-        <div className="wheel-container">
+        <div className="wheel-container" style={wheelVars}>
           <div className={`wheel ${spinning}`} style={wheelVars}>
             {items.map((item, index) => (
             <div className={`wheel-item ${smallFont}`} key={index} style={{ '--item-nb': index }}>

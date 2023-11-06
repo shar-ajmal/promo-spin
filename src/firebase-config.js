@@ -40,6 +40,9 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
+// Get a reference to the Storage service
+export const storage = getStorage(app);
+
 const googleProvider = new GoogleAuthProvider();
 
 // function uploaQRCode(file, userId) {

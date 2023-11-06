@@ -8,14 +8,20 @@ import OptionTable from "./OptionTable";
 import Navbar from "./Navbar";
 import Settings from "./Settings";
 import GameInfo from "./GameInfo";
+import GameNavBar from "./GameNavbar";
+import UploadLogo from "./UploadLogo";
+
+import { updateDataModelIfNeeded } from "./updateFunctions";
 
 import { collection, getDocs, addDoc, query, where, updateDoc, doc } from 'firebase/firestore'
 import { constructWheelArray } from './function';
-import { db } from './firebase-config';
-import { useParams } from 'react-router-dom';
+import { db, storage } from './firebase-config';
+import { useFetcher, useParams } from 'react-router-dom';
 import { Button, Typography } from 'antd'
 
 import { useNavigate } from "react-router-dom";
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
+
 
 
 export default function GameCustom({user}) {
@@ -26,6 +32,10 @@ export default function GameCustom({user}) {
     const [gameName, setGameName] = useState()
     const [wheelColor, setWheelColor] = useState('')
     const [textColor, setTextColor] = useState('')
+    const [displayName, setDisplayName] = useState(true)
+    const [file, setFile] = useState(null);
+    const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+    const [logoUrl, setLogoUrl] = useState('')
 
 
     const [gameData, setGameData] = useState()
@@ -64,13 +74,39 @@ export default function GameCustom({user}) {
       }
   }
 
+  useEffect(() => {
+    if (gameData != undefined) {
+      const newFields = {
+        wheelColor: '#333',
+        textColor: '#ffffff',
+        displayName: true,
+        logoUrl: ''
+      };
+
+      console.log("printing game id")
+      console.log(gameData.id)
+      
+      updateDataModelIfNeeded(gameData.id, newFields)
+    }
+  }, [gameData])
+
+  useEffect(() => {
+    if (gameData != undefined) {
+      setWheelColor(gameData.wheelColor)
+      setTextColor(gameData.textColor)
+      setDisplayName(gameData.displayName)
+    }
+  }, [gameData])
+
+  useEffect(() => {
+    console.log("fetching logs")
+    fetchFileUrl();
+  }, [gameData]);
 
     useEffect(() => {
         console.log("Printing user info in custom game page")
         console.log(user)
         console.log("done printing user info")
-        setWheelColor("#da3768")
-        setTextColor("#ffffff")
         // setDisplayOnboarding(false)
         if (user != undefined) {
             getTableData()
@@ -78,6 +114,12 @@ export default function GameCustom({user}) {
             getWinEmail()
         }
     }, [])
+
+    useEffect(() => {
+      if (gameData != undefined) {
+        setGameName(gameData.game_name)
+      }
+    }, [gameData])
 
     const getTableData = async() => {
         console.log("getting user dt")
@@ -90,6 +132,20 @@ export default function GameCustom({user}) {
         console.log("table values")
         console.log(tableValues)
     }
+
+    const fetchFileUrl = async () => {
+      const gameId = gameData.id
+      console.log("inside fetch file")
+      console.log(gameId)
+      try {
+        const fileRef = ref(storage, `userLogos/${gameId}/logo.png`);
+        const url = await getDownloadURL(fileRef);
+        setFile(url);
+        setImagePreviewUrl(url)
+      } catch (error) {
+        console.error("Error fetching file URL: ", error);
+      }
+    };
 
     const getGameData = async() => {
         console.log("Getting game data query params")
@@ -160,7 +216,7 @@ export default function GameCustom({user}) {
       </div>
       <div className="desktop-elements">
         <div class="section1">
-          {gameData ? <GameInfo setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+          {gameData ? <GameInfo imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
         </div>
         <div class="section2">
 
@@ -168,6 +224,7 @@ export default function GameCustom({user}) {
                 Spin Wheel Customization
             </Typography.Title>
             <br></br>
+            { gameData ? <GameNavBar imagePreviewUrl={imagePreviewUrl} displayName={displayName} gameName={gameName} wheelColor={wheelColor} textColor={textColor} gameData={gameData}></GameNavBar> : <p>Loading...</p>}
             <SpinWheel wheelElements={wheelElements} wheelColor={wheelColor} textColor={textColor}/>
             {gameData ? <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/> : <p>Loading...</p>}
         </div>
@@ -175,11 +232,12 @@ export default function GameCustom({user}) {
         <div className="tab-section">
         {activeTab === "tab1" && (
             <div style={{padding: '20px'}}>
-                {gameData ? <GameInfo setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+              {gameData ? <GameInfo imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
             </div>
         )}
         {activeTab === "tab2" && (
           <div>
+            <GameNavBar imagePreviewUrl={imagePreviewUrl} displayName={displayName} gameName={gameName} wheelColor={wheelColor} textColor={textColor} gameData={gameData}></GameNavBar>
             <SpinWheel wheelElements={wheelElements} wheelColor={wheelColor} textColor={textColor}/>
             <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/>
 
