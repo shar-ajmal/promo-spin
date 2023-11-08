@@ -6,7 +6,8 @@ import NavbarUserForm from './NavbarUserForm';
 import { useParams } from 'react-router-dom';
 import { collection, getDocs, query, where } from 'firebase/firestore'
 import { constructWheelArray } from './function';
-import { db } from './firebase-config';
+import { db, storage } from './firebase-config';
+import { getStorage, ref, getDownloadURL } from 'firebase/storage';
 
 export default function SpinPage() {
     const [selectedItem, setSelectedItem] = useState(null)
@@ -15,6 +16,11 @@ export default function SpinPage() {
     const [gameData, setGameData] = useState([])
     const [apothec, setApothec] = useState(false)
     const [userId, setUserId] = useState('')
+
+    const [wheelColor, setWheelColor] = useState('')
+    const [textColor, setTextColor] = useState('')
+    const [logo, setLogo] = useState('')
+    const [gameName, setGameName] = useState('')
 
     // const busNameCollectionRef = collection(db, 'busName')
     const userCollectionRef = collection(db, 'users')
@@ -34,11 +40,32 @@ export default function SpinPage() {
         }
     }, [])
 
-    // useEffect(() => {
-    //     setApothec(true)
-    //     console.log("Printing game data apothec")
-    //     console.log(gameData.user_id)
-    // }, [gameData])
+    useEffect(() => {
+        if (gameData != undefined) {
+
+        // fetchFileUrl()
+        setGameName(gameData.game_name)
+        setTextColor(gameData.textColor)
+        setWheelColor(gameData.wheelColor)
+        setLogo(gameData.logoURL)
+        }
+    }, [gameData])
+
+    const fetchFileUrl = async () => {
+        const gameId = gameData.id
+        console.log("inside fetch file")
+        console.log(gameId)
+        console.log("getting gameId")
+        console.log(gameData)
+        console.log(gameData.id)
+        try {
+          const fileRef = ref(storage, `userLogos/${gameId}/logo.png`);
+          const url = await getDownloadURL(fileRef);
+          setLogo(url);
+        } catch (error) {
+          console.error("Error fetching file URL: ", error);
+        }
+      };
 
     const getGameData = async() => {
         let data = await getDocs(query(gamesCollectionRef, where("game_id", "==", gameId)));
@@ -53,34 +80,11 @@ export default function SpinPage() {
         setWheelElements(wheelArray)
     }
 
-    // const getTableData = async() => {
-    //     console.log("getting user dt")
-    //     let data = await getDocs(query(tableCollectionRef, where("game_id", "==", gameId)));
-    //     console.log("Table elements")
-    //     console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-    //     var wheelArray = constructWheelArray(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-    //     setWheelElements(wheelArray)
-    // }
-
-    // const getBusData = async() => {
-    //     let data = await getDocs(query(userCollectionRef, where("game_id", "==", gameId)));
-    //     if (data != undefined) {
-    //         // console.log(data.docs.map((doc) => ({...doc.data()}))[0])
-    //         setBusName(data.docs.map((doc) => ({...doc.data()}))[0]['business_name'])
-    //     }
-    // }
-    
-    function selectItemIndex() {
-        const selectedItemIndex = Math.floor(Math.random() * wheelElements.length);
-        setSelectedItem(selectedItemIndex)
-        console.log(selectedItemIndex)
-    }
-
     if(wheelElements != undefined) {
         return (
             <div>
-                <NavbarUserForm apothec={apothec} busName={gameData.game_name}></NavbarUserForm>
-                <Wheel apothec={apothec} gameId={gameId} gameData={gameData}  wheelElements={wheelElements} selectedItem={selectedItem}/> 
+                <NavbarUserForm logo={logo} wheelColor={wheelColor} textColor={textColor} gameName={gameName} apothec={apothec} gameData={gameData} busName={gameData.game_name}></NavbarUserForm>
+                <Wheel wheelColor={wheelColor} textColor={textColor} apothec={apothec} gameId={gameId} gameData={gameData}  wheelElements={wheelElements} selectedItem={selectedItem}/> 
             </div>
         )
     }
