@@ -70,11 +70,11 @@ export default function Navbar({user}) {
                     Emails
                 </Typography.Title>
             </div>
-            <div class="category" onClick={() => handleBack('/send_email')}>
+            {/* <div class="category" onClick={() => handleBack('/send_email')}>
                 <Typography.Title level={5} style={{ margin: 0, color: 'white' }}>
                     Send Emails
                 </Typography.Title>
-            </div>
+            </div> */}
             <div class="category" onClick={() => handleBack('/chart')}>
                 <Typography.Title level={5} style={{ margin: 0, color: 'white' }}>
                     Chart

@@ -6,6 +6,12 @@ import { UploadOutlined } from '@ant-design/icons';
 export default function UploadLogo({imagePreviewUrl, setImagePreviewUrl, file, setFile}) {
     const [fileList, setFileList] = useState([])
 
+    useEffect(() => {
+        if (file) {
+            setFileList([file])
+        }
+    }, [file])
+
     const handleFileChange = (info) => {
         if (info.file.status === 'removed') {
             // Clear the preview and the file state

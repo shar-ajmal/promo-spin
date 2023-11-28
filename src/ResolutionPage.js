@@ -15,6 +15,11 @@ export default function ResolutionPage({user}) {
     const [fbPage, setFBPage] = useState('')
     const [apothec, setApothec] = useState(false)
 
+    const [wheelColor, setWheelColor] = useState('')
+    const [textColor, setTextColor] = useState('')
+    const [logo, setLogo] = useState('')
+    const [gameName, setGameName] = useState('')
+
     const params = useParams();
     const gameId = params.gameId;
     // var encodedWonItem = params.wonItem
@@ -43,6 +48,12 @@ export default function ResolutionPage({user}) {
       if(gameData.user_id == "Su5PLb3DQeOsRWbqfAFB6Bl8D6F2") {
         setApothec(true)
       }
+
+      setGameName(gameData.game_name)
+      setTextColor(gameData.textColor)
+      setWheelColor(gameData.wheelColor)
+      setLogo(gameData.logoURL)
+
     }, [gameData])
 
     function instagramLink() {
@@ -87,7 +98,7 @@ export default function ResolutionPage({user}) {
     
     return (
         <div>
-            <NavbarUserForm busName={gameData.game_name} apothec={apothec}>
+            <NavbarUserForm logo={logo} wheelColor={wheelColor} textColor={textColor} gameName={gameName} apothec={apothec} gameData={gameData} busName={gameData.game_name}>
             </NavbarUserForm>
             <div className="won-item">
                 <Typography.Title level={1} style={{ margin: 0, color: 'black' }}>
@@ -99,10 +110,10 @@ export default function ResolutionPage({user}) {
                         Thanks for playing!
                 </Typography.Title>
                 {igHandle != '' ? 
-                <div className="ig-button" onClick={instagramLink}>
+                <div className="ig-button" onClick={instagramLink} style={{background: wheelColor}}>
                     <img className="ig-logo" src="/ig_logo.webp"/>
                     <div>
-                    <Typography.Title level={5} style={{ margin: 0, color: 'white', paddingLeft: "10px" }}>
+                    <Typography.Title level={5} style={{ margin: 0, color: textColor, paddingLeft: "10px" }}>
                         Follow the journey with @{igHandle}
                     </Typography.Title>
                     </div>

@@ -97,13 +97,13 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         //     alert ("Business owner needs to upgrade plan! Email Limit Hit!")
         //     return;
         // }
-        // const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
-        submitInfo()
-        // if (!qSnap.empty) {
-        //     alert("email alredy exists!")
-        // } else {
-        //     submitInfo()
-        // }
+        const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
+        // submitInfo()
+        if (!qSnap.empty) {
+            alert("email alredy exists!")
+        } else {
+            submitInfo()
+        }
     }
 
     function modifyWinEmail(spinnedItem) {

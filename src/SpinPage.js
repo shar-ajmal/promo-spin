@@ -43,7 +43,6 @@ export default function SpinPage() {
     useEffect(() => {
         if (gameData != undefined) {
 
-        // fetchFileUrl()
         setGameName(gameData.game_name)
         setTextColor(gameData.textColor)
         setWheelColor(gameData.wheelColor)

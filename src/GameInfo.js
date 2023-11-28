@@ -57,7 +57,7 @@ export default function GameInfo ({user, gameData, textColor, wheelColor, setWhe
 
 
     const saveLogo = async () => {
-        if (!file) return;
+        // if (!file) return;
 
         const gameId = gameData.id;
 
