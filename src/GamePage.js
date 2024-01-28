@@ -69,7 +69,9 @@ export default function GamePage({user}) {
                 'form_fields': [{'fieldName': 'email', 'deletable': false, 'fieldId': 1}],
                 'wheel_fields': [{'name': 'item1', 'probability': 50, 'id': uuidv4()}, {'name': 'item2', 'probability': 50, 'id': uuidv4()}],
                 'qr_code': qrCodeString, 
-                'game_enabled': true
+                'game_enabled': true, 
+                "wheelColor": '#333',
+                'textColor': "#ffffff",
             })
 
             const gameUrl = "/game/" + newGameId
