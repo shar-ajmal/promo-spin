@@ -18,6 +18,8 @@ function renderMyWidget(gameId) {
     );
 }
 
+console.log("This is the embeddable widget")
+
 window.onload = () => {
     // Check for the presence of the 'spinWheelTrigger' div
     console.log("window has been loaded")

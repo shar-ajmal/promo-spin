@@ -12,9 +12,10 @@
     "csv-writer": "^1.6.0",
     "excel4node": "^1.8.1",
     "file-saver": "^2.0.5",
-    "firebase": "^9.17.1",
+    "firebase": "^9.23.0",
     "moment": "^2.29.4",
     "onboarding-react": "^1.0.0",
+    "parcel": "^2.9.3",
     "puppeteer": "^19.11.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,11 +28,15 @@
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },
+  "alias": {
+    "process": false
+ },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:widget": "parcel build src/embeddable/embedWidget.js --no-source-maps --dist-dir build/widget"
   },
   "eslintConfig": {
     "extends": [

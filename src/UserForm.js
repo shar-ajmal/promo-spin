@@ -7,6 +7,7 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
     const collectedInfoRef = collection(db, 'collected_info')
     const [role, setRole] = useState("")
     const [winEmail, setWinEmail] = useState("")
+    const [adminEmail, setAdminEmail] = useState("")
     const freePlanLimit = 150;
 
     console.log("in user form")
@@ -17,6 +18,7 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
     const[selectedItem, setSelectedItem] = useState(null)
 
     const winEmailCollectionRef = collection(db, 'win_emails')
+    const usersCollectionRef = collection(db, 'users')
 
     const form = useRef();
     const didMount = useRef(false);
@@ -69,6 +71,18 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         setSendFields(formFieldJSON)
     }, [])
 
+    const getAdminEmail = async() => {
+        const data = await getDocs(query(usersCollectionRef, where('user_id', '==', gameData.user_id)));
+        const doc = data.docs.map((doc) => ({...doc.data(), id:doc.id}))[0]
+        setAdminEmail(doc.email)
+    }
+
+    useEffect(() => {
+        if (gameData != undefined) {
+            getAdminEmail()
+        }
+    }, [gameData])
+
     useEffect(() => {
         // if ( !didMount.current || selectedItem['item_name'] === "" ) {
         //     console.log("Exiting")
@@ -78,6 +92,7 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         console.log("USE EFFECT")
         console.log(selectedItem)
         if (selectedItem) {
+            console.log("sending the email")
             sendEmail()
         }
     }, [selectedItem])
@@ -98,12 +113,12 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         //     return;
         // }
         const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
-        // submitInfo()
-        if (!qSnap.empty) {
-            alert("email alredy exists!")
-        } else {
-            submitInfo()
-        }
+        submitInfo()
+        // if (!qSnap.empty) {
+        //     alert("email alredy exists!")
+        // } else {
+        //     submitInfo()
+        // }
     }
 
     function modifyWinEmail(spinnedItem) {
@@ -212,11 +227,12 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         allFields['send_email'] = emailText
         allFields['item_name'] = selectedItem
         allFields['send_to_email'] =  sendFields['email']
+        allFields['admin_email'] = adminEmail
         // allFields['user_name']:
         allFields['game_name'] = gameData['game_name']
         console.log("printing out all fields")
         console.log(allFields)
-        emailjs.send('service_5fq3k6n', 'template_lv6j86b', allFields, '_5voPVzogLZi48BMl')
+        emailjs.send('service_hffutvo', 'template_ve594cg', allFields, '6Eohf7T4_Yeh7W24i')
           .then((result) => {
               console.log(result.text);
           }, (error) => {
