@@ -2,6 +2,9 @@ import {useState, useEffect, useRef} from 'react';
 import {db} from './firebase-config'
 import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/firestore'
 import emailjs from '@emailjs/browser';
+import { Checkbox } from 'antd';
+import { CheckboxProps } from 'antd';
+
 
 export default function UserForm({apothec, widget, setSelectedItemTop, gameData, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
@@ -9,6 +12,7 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
     const [winEmail, setWinEmail] = useState("")
     const [adminEmail, setAdminEmail] = useState("")
     const freePlanLimit = 150;
+    const [consent, setConsent] = useState(false)
 
     console.log("in user form")
     // console.log(userId)
@@ -201,6 +205,7 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
             obj[key] = sendFields[key]
             collectedInfoList.push(obj)
         }
+        collectedInfoList.push({'Consented to Marketing': consent.toString()})
 
         if (sendFields['email'] != "") {
             addDoc(collectedInfoRef,  {
@@ -209,7 +214,8 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
                 'email': sendFields['email'],
                 'item_name': spinnedItem,
                 'game_id': gameData.game_id, 
-                'user_id': gameData.user_id
+                'user_id': gameData.user_id, 
+                'consent': consent,
             })
         }
 
@@ -262,9 +268,17 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         console.log(e.target.name)
     }
 
+    const checkboxOnChange = (e) => {
+        console.log(`checked = ${e.target.checked}`);
+        console.log("inside checkbox")
+        console.log(e.target.checked)
+        setConsent(e.target.checked)
+      };
+
     return (
         <form class="user-form input-margin">
             {console.log("loading game data")}
+            <Checkbox onChange={checkboxOnChange}>Consent to Receiving Marketing Material</Checkbox>
             {console.log(gameData['form_fields'])}
             {
                 gameData && Array.isArray(gameData['form_fields']) &&
