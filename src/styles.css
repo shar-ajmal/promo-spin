@@ -372,6 +372,10 @@
   width: 50px;
 }
 
+.code-snippet-body {
+  max-width: 600px;
+}
+
 
 /* 
   button {

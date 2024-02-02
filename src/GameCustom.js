@@ -12,16 +12,16 @@ import GameNavBar from "./GameNavbar";
 import UploadLogo from "./UploadLogo";
 
 import { updateDataModelIfNeeded } from "./updateFunctions";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+
 
 import { collection, getDocs, addDoc, query, where, updateDoc, doc } from 'firebase/firestore'
-import { constructWheelArray } from './function';
+import { constructWheelArray, validEntries } from './function';
 import { db, storage } from './firebase-config';
 import { useFetcher, useParams } from 'react-router-dom';
 import { Button, Typography } from 'antd'
 
 import { useNavigate } from "react-router-dom";
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-
 
 
 export default function GameCustom({user}) {
@@ -36,8 +36,10 @@ export default function GameCustom({user}) {
     const [file, setFile] = useState(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState('');
     const [logoUrl, setLogoUrl] = useState('')
+    const [fbPage, setFBPage] = useState('')
+    const [igHandle, setIGHandle] = useState('')
 
-
+    
     const [gameData, setGameData] = useState()
 
     const tableCollectionRef = collection(db, 'table_values')
@@ -58,6 +60,21 @@ export default function GameCustom({user}) {
   //   useEffect(() => {
   //     getWinEmail()
   // }, [])
+
+  const saveButtonStyle = {
+    background: '#52c41a',
+borderColor: '#52c41a',
+color: '#fff',
+fontWeight: 500,
+transition: 'all 0.3s ease-in-out',
+marginRight: '50px'
+  };
+
+  const hoverStyle = {
+    background: '#5eff5e',
+    borderColor: '#5eff5e',
+    transition: 'all 0.3s ease-in-out',
+  };
 
   const getWinEmail = async() => {
       console.log("Getting the win email")
@@ -100,7 +117,10 @@ export default function GameCustom({user}) {
 
   useEffect(() => {
     console.log("fetching logs")
-    fetchFileUrl();
+    if (gameData != null) {
+      fetchFileUrl();
+
+    }
   }, [gameData]);
 
     useEffect(() => {
@@ -109,7 +129,7 @@ export default function GameCustom({user}) {
         console.log("done printing user info")
         // setDisplayOnboarding(false)
         if (user != undefined) {
-            getTableData()
+            // getTableData()
             getGameData()
             getWinEmail()
         }
@@ -118,20 +138,26 @@ export default function GameCustom({user}) {
     useEffect(() => {
       if (gameData != undefined) {
         setGameName(gameData.game_name)
+        setTableValues(gameData.wheel_fields)
+        console.log("printing wheel fields")
+        console.log(gameData.wheel_fields)
       }
     }, [gameData])
 
-    const getTableData = async() => {
-        console.log("getting user dt")
-        let data = await getDocs(query(tableCollectionRef, where("user_id", "==", user.uid)));
-        console.log("Custom Game Table elements")
-        console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-        setTableValues(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-        var wheelArray = constructWheelArray(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
-        setWheelElements(wheelArray)
-        console.log("table values")
-        console.log(tableValues)
-    }
+    // const getTableData = async() => {
+    //     console.log("getting user dt")
+    //     let data = await getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid)));
+    //     console.log("Custom Game Table elements")
+    //     console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+    //     // console.log(gameData.wheel_fields)
+    //     // setTableValues(gameData.wheel_fields)
+    //     console.log(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+
+    //     var wheelArray = constructWheelArray(data.docs.map((doc) => ({...doc.data(), id:doc.id})))
+    //     setWheelElements(wheelArray)
+    //     console.log("table values")
+    //     console.log(tableValues)
+    // }
 
     const fetchFileUrl = async () => {
       const gameId = gameData.id
@@ -156,7 +182,11 @@ export default function GameCustom({user}) {
         console.log(gameData.docs.map((doc) => ({...doc.data(), id:doc.id}))[0])
         setGameData(gameData.docs.map((doc) => ({...doc.data(), id:doc.id}))[0])
         console.log("printing form wheel data")
+        // setTableValues(gameData.docs.map((doc) => doc.data().wheel_fields)[0].wheel_fields)
         var wheelArray = constructWheelArray(gameData.docs.map((doc) => doc.data().wheel_fields)[0])
+        console.log("about to set wheel elements")
+        console.log(gameData.docs.map((doc) => doc.data().wheel_fields)[0])
+        console.log(wheelArray)
         setWheelElements(wheelArray)
     }
   
@@ -192,13 +222,161 @@ export default function GameCustom({user}) {
         }
 
     }
+
+    const updateGame = async() => {
+        const gamesCollectionRef = collection(db, 'games');
+        const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+        getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+            const docRef = doc(db, "games", res.docs[0].id);
+            console.log(docRef)
+            updateDoc(docRef, { 'wheel_fields': tableValues });
+        })
+        if (docRef.empty) {
+            console.log('No matching documents.');
+            return;
+        }
+    }
+
+    const saveGameName = async () => {
+      const gamesCollectionRef = collection(db, 'games');
+      const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+      getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+          const docRef = doc(db, "games", res.docs[0].id);
+          console.log(docRef)
+          updateDoc(docRef, { 'game_name': gameName });
+      })
+      if (docRef.empty) {
+          console.log('No matching documents.');
+          return;
+      }
+      // console.log("game name update")
+      // console.log(gameName)
+    }
+
+    function save() {
+      if (validEntries(tableValues)) {
+        saveGameName()
+        saveGameFields()
+        saveSocialFields()
+        saveGameColorsDisplay()
+        saveLogo()
+        updateGame()
+
+        var wheelArray = constructWheelArray(tableValues)
+        setWheelElements(wheelArray)
+        alert("Changes Saved")
+      }
+    }
+
+    const saveLogo = async () => {
+      if (!(file instanceof File)) {
+        console.log("not instance of file")
+        return
+      } 
+      console.log('printing file')
+      console.log(file)
+      const gameId = gameData.id;
+
+      // Create a storage reference
+      const storageRef = ref(storage, `userLogos/${gameId}/logo.png`);
+
+      try {
+          // If there's already a logo, delete it before uploading the new one
+          await deleteObject(storageRef).catch(error => {
+          // It's okay if the delete failed because the file didn't exist
+          if (error.code !== 'storage/object-not-found') {
+              throw error;
+          }
+          });
+
+          // Upload the new file
+          const snapshot = await uploadBytes(storageRef, file);
+          // Get the download URL
+          const downloadURL = await getDownloadURL(snapshot.ref);
+
+          // Save the download URL to the user's document in Firestore
+          const userRef = doc(db, 'games', gameId);
+          await updateDoc(userRef, {
+          logoURL: downloadURL,
+          });
+
+          console.log('File uploaded and URL saved to Firestore!');
+      } catch (error) {
+          console.error('Error uploading image and saving URL:', error);
+      }
+  };
+
+
+    const saveGameColorsDisplay = async() => {
+      const updateData ={
+          'wheelColor': wheelColor, 
+          'textColor': textColor, 
+          'displayName': displayName,
+      }
+
+      const gamesCollectionRef = collection(db, 'games');
+      const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+      getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+          const docRef = doc(db, "games", res.docs[0].id);
+          console.log(docRef)
+          updateDoc(docRef, updateData);
+      })
+      if (docRef.empty) {
+          console.log('No matching documents.');
+          return;
+      }
+  }
+
+  const saveGameFields = async() => {
+      const gamesCollectionRef = collection(db, 'games');
+      const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+      getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+          const docRef = doc(db, "games", res.docs[0].id);
+          console.log(docRef)
+          updateDoc(docRef, { 'form_fields': formFields });
+      })
+      if (docRef.empty) {
+          console.log('No matching documents.');
+          return;
+      }
+  }
+
+  const saveSocialFields = async() => {
+      const gamesCollectionRef = collection(db, 'games');
+      const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+      getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+          const docRef = doc(db, "games", res.docs[0].id);
+          console.log(docRef)
+          updateDoc(docRef, { 'ig_handle': igHandle, 'fb_page': fbPage });
+      })
+      if (docRef.empty) {
+          console.log('No matching documents.');
+          return;
+      }
+  }
     
   return (
     <div className="screen-with-tabs">
         <Navbar user={user}/>
         <div class="top-button-container">
             <Button onClick={() => navigate('/')}> {"<- Back"}</Button>
-            <Button danger onClick={deleteGame}>Delete Game</Button>
+            <div>
+
+              <Button style={saveButtonStyle}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.background = hoverStyle.background;
+                    e.currentTarget.style.borderColor = hoverStyle.borderColor;
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.background = saveButtonStyle.background;
+                    e.currentTarget.style.borderColor = saveButtonStyle.borderColor;
+                }}
+                onClick={save}> {"Save"}</Button>
+
+<Button danger onClick={deleteGame}>Delete Game</Button>
+
+            </div>
+            
         </div>
       <div className="tabs">
         <button
@@ -216,7 +394,7 @@ export default function GameCustom({user}) {
       </div>
       <div className="desktop-elements">
         <div class="section1">
-          {gameData ? <GameInfo imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+          {gameData ? <GameInfo igHandle={igHandle} setIGHandle={setIGHandle} fbPage={fbPage} setFBPage={setFBPage} imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
         </div>
         <div class="section2">
 
@@ -232,7 +410,7 @@ export default function GameCustom({user}) {
         <div className="tab-section">
         {activeTab === "tab1" && (
             <div style={{padding: '20px'}}>
-              {gameData ? <GameInfo imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+              {gameData ? <GameInfo igHandle={igHandle} setIGHandle={setIGHandle} fbPage={fbPage} setFBPage={setFBPage}  imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
             </div>
         )}
         {activeTab === "tab2" && (

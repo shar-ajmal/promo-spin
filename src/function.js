@@ -19,6 +19,38 @@ export function findGCD(arr, n) {
     return result;
 }
 
+export function validEntries(tableValues) {
+    var probSum = 0
+    for (var i=0;i<tableValues.length;i++) {
+        if (tableValues[i]['name'] == "" || tableValues[i]['probability'] == "") {
+            alert("No fields can be empty!")
+            return false
+        }
+        console.log("testing prob")
+        console.log(parseInt(tableValues[i]['probability']))
+        console.log(parseInt(tableValues[i]['probability']) % 10)
+        let probValue = parseInt(tableValues[i]['probability'])
+
+        if(probValue % 5 != 0) {
+            alert("Probabilities need to be divisible by 5!")
+            return false
+        }
+
+        console.log(tableValues[i])
+        console.log(tableValues[i]['probability'])
+        probSum += parseInt(tableValues[i]['probability'])
+    }
+
+    console.log("probsum")
+    console.log(probSum)
+    if (probSum != 100) {
+        alert("Probabilities need to equal 100!")
+        return false
+    }
+
+    return true
+}
+
 export function shuffleArray(array) {
     let valueDict = {}
     for (let i=0; i < array.length; i++) {

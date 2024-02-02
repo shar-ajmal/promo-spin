@@ -17,20 +17,20 @@ import RemainingProb from './RemainingProb';
 import { Button, Typography } from 'antd'
 
 
-export default function OptionTable({ user, wheelElements, setWheelElements, gameData, setGameData, tableCollectionRef}) {
+export default function OptionTable({ tableValues, setTableValues, user, wheelElements, setWheelElements, gameData, setGameData, tableCollectionRef}) {
     console.log("gae")
     console.log(wheelElements)
 
-    const [tableValues, setTableValues] = useState([])
+    // const [tableValues, setTableValues] = useState([])
 
     const { Text, Link } = Typography;
 
 
-    useEffect(() => {
-        console.log("In option table")
-        console.log(gameData)
-        setTableValues(gameData.wheel_fields)
-    }, [])
+    // useEffect(() => {
+    //     console.log("In option table")
+    //     console.log(gameData)
+    //     setTableValues(gameData.wheel_fields)
+    // }, [])
 
     const saveButtonStyle = {
         background: '#52c41a',
@@ -79,26 +79,26 @@ export default function OptionTable({ user, wheelElements, setWheelElements, gam
         return true
     }
 
-    const updateGame = async() => {
-        const gamesCollectionRef = collection(db, 'games');
-        const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
-        getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
-            const docRef = doc(db, "games", res.docs[0].id);
-            console.log(docRef)
-            updateDoc(docRef, { 'wheel_fields': tableValues });
-        })
-        if (docRef.empty) {
-            console.log('No matching documents.');
-            return;
-        }
-    }
+    // const updateGame = async() => {
+    //     const gamesCollectionRef = collection(db, 'games');
+    //     const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+    //     getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+    //         const docRef = doc(db, "games", res.docs[0].id);
+    //         console.log(docRef)
+    //         updateDoc(docRef, { 'wheel_fields': tableValues });
+    //     })
+    //     if (docRef.empty) {
+    //         console.log('No matching documents.');
+    //         return;
+    //     }
+    // }
     function updateTableDatabase() {
         if (!validEntries()) {
             return
         }
 
-        updateGame()
-        console.log("In updateTableDatabase")
+        // updateGame()
+        // console.log("In updateTableDatabase")
 
         var wheelArray = constructWheelArray(tableValues)
         setWheelElements(wheelArray)
@@ -115,8 +115,9 @@ export default function OptionTable({ user, wheelElements, setWheelElements, gam
             </Typography.Title> */}
             {console.log("HELLO")}
             {console.log(tableValues)}
-            <RemainingProb tableValues={tableValues}></RemainingProb>
-            <table class="table input-margin" id="table">
+            {tableValues && (
+      <RemainingProb tableValues={tableValues}></RemainingProb>
+    )}            <table class="table input-margin" id="table">
                 {console.log("gae3")}
                 <tr>
                     <th>
@@ -130,11 +131,25 @@ export default function OptionTable({ user, wheelElements, setWheelElements, gam
                         </Typography.Title>
                     </th>
                 </tr>
-                {tableValues.map((element, index) => { return (
-                    <tr class="entry-row" id={"entry-row-" + index}>
-                        <InputFields fuckhello={'fuckhello'} tableValues={tableValues} setTableValues={setTableValues} id={element.id} fName={element['name']} fProbability={element.probability}></InputFields>
-                    </tr>
-                )})}
+        {tableValues ? (
+            <tbody>
+            {tableValues.map((element, index) => (
+                <tr className="entry-row" key={"entry-row-" + index}>
+                <InputFields
+                    fuckhello={'fuckhello'}
+                    tableValues={tableValues}
+                    setTableValues={setTableValues}
+                    id={element.id}
+                    fName={element['name']}
+                    fProbability={element.probability}
+                />
+                </tr>
+            ))}
+            </tbody>
+        ) : (
+        <p>Loading...</p>
+        )}
+
                 {console.log("gae5")}
                 {console.log(tableValues)}
             </table>
@@ -149,7 +164,7 @@ export default function OptionTable({ user, wheelElements, setWheelElements, gam
                         e.currentTarget.style.background = saveButtonStyle.background;
                         e.currentTarget.style.borderColor = saveButtonStyle.borderColor;
                     }}
-                    onClick={updateTableDatabase}>Save</Button>
+                    onClick={updateTableDatabase}>Show Prizes on Wheel</Button>
             </div>
         </div>
     )

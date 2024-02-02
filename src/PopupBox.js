@@ -36,7 +36,7 @@ const PopupBox = ({ onClose, children, wheelElements, gameData }) => {
           :
           <div>
             <h1>Congratulations!</h1>
-            <h3>You have won {selectedItemTop}</h3>
+            <h3>You have won {selectedItemTop}. Check your email!</h3>
           </div>
         }
       </div>

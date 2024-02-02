@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, updateDoc, doc, deleteDoc, addDoc, query, where} from 'firebase/firestore'
 import { db, storage } from "./firebase-config";
-import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+// import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { Input, Button, Space, Typography } from 'antd';
 
@@ -11,14 +11,14 @@ import Settings from "./Settings";
 import SocialFields from "./SocialFields";
 import GameColors from "./GameColors";
 import UploadLogo from "./UploadLogo";
+import CodeSnippet from "./CodeSnippet";
 
 import "./gamecustom.css";
 
-export default function GameInfo ({user, gameData, textColor, wheelColor, setWheelColor, setTextColor, gameName, setGameName, displayName, setDisplayName, file, setFile, imagePreviewUrl, setImagePreviewUrl}) {
+export default function GameInfo ({igHandle, setIGHandle, fbPage, setFBPage, user, gameData, textColor, wheelColor, setWheelColor, setTextColor, gameName, setGameName, displayName, setDisplayName, file, setFile, imagePreviewUrl, setImagePreviewUrl}) {
     const [formFields, setFormFields] = useState([])
     // const [gameName, setGameName] = useState()
-    const [fbPage, setFBPage] = useState('')
-    const [igHandle, setIGHandle] = useState('')
+   
 
 
     useEffect(() => {
@@ -33,11 +33,11 @@ export default function GameInfo ({user, gameData, textColor, wheelColor, setWhe
     }, [])
 
     function save() {
-        saveGameName()
-        saveGameFields()
-        saveSocialFields()
-        saveGameColorsDisplay()
-        saveLogo()
+        // saveGameName()
+        // saveGameFields()
+        // saveSocialFields()
+        // saveGameColorsDisplay()
+        // saveLogo()
     }
 
     const saveButtonStyle = {
@@ -56,39 +56,39 @@ export default function GameInfo ({user, gameData, textColor, wheelColor, setWhe
       };
 
 
-    const saveLogo = async () => {
-        // if (!file) return;
+    // const saveLogo = async () => {
+    //     // if (!file) return;
 
-        const gameId = gameData.id;
+    //     const gameId = gameData.id;
 
-        // Create a storage reference
-        const storageRef = ref(storage, `userLogos/${gameId}/logo.png`);
+    //     // Create a storage reference
+    //     const storageRef = ref(storage, `userLogos/${gameId}/logo.png`);
 
-        try {
-            // If there's already a logo, delete it before uploading the new one
-            await deleteObject(storageRef).catch(error => {
-            // It's okay if the delete failed because the file didn't exist
-            if (error.code !== 'storage/object-not-found') {
-                throw error;
-            }
-            });
+    //     try {
+    //         // If there's already a logo, delete it before uploading the new one
+    //         await deleteObject(storageRef).catch(error => {
+    //         // It's okay if the delete failed because the file didn't exist
+    //         if (error.code !== 'storage/object-not-found') {
+    //             throw error;
+    //         }
+    //         });
 
-            // Upload the new file
-            const snapshot = await uploadBytes(storageRef, file);
-            // Get the download URL
-            const downloadURL = await getDownloadURL(snapshot.ref);
+    //         // Upload the new file
+    //         const snapshot = await uploadBytes(storageRef, file);
+    //         // Get the download URL
+    //         const downloadURL = await getDownloadURL(snapshot.ref);
 
-            // Save the download URL to the user's document in Firestore
-            const userRef = doc(db, 'games', gameId);
-            await updateDoc(userRef, {
-            logoURL: downloadURL,
-            });
+    //         // Save the download URL to the user's document in Firestore
+    //         const userRef = doc(db, 'games', gameId);
+    //         await updateDoc(userRef, {
+    //         logoURL: downloadURL,
+    //         });
 
-            console.log('File uploaded and URL saved to Firestore!');
-        } catch (error) {
-            console.error('Error uploading image and saving URL:', error);
-        }
-    };
+    //         console.log('File uploaded and URL saved to Firestore!');
+    //     } catch (error) {
+    //         console.error('Error uploading image and saving URL:', error);
+    //     }
+    // };
 
 
       const saveGameColorsDisplay = async() => {
@@ -191,7 +191,7 @@ export default function GameInfo ({user, gameData, textColor, wheelColor, setWhe
             </Typography.Title>
             {gameData ? <GameFields gameData={gameData} user={user} formFields={formFields} setFormFields={setFormFields}></GameFields> : <p>Loading...</p>}
             <br></br>
-            <Button className='save-button' style={saveButtonStyle}
+            {/* <Button className='save-button' style={saveButtonStyle}
                 onMouseEnter={(e) => {
                     e.currentTarget.style.background = hoverStyle.background;
                     e.currentTarget.style.borderColor = hoverStyle.borderColor;
@@ -200,13 +200,19 @@ export default function GameInfo ({user, gameData, textColor, wheelColor, setWhe
                     e.currentTarget.style.background = saveButtonStyle.background;
                     e.currentTarget.style.borderColor = saveButtonStyle.borderColor;
                 }}
-            onClick={save}>Save</Button>
+            onClick={save}>Save</Button> */}
             <br></br>
+            <Typography.Title level={3} style={{ margin: 0 }}>
+                Add Spin Wheel in Website
+            </Typography.Title>
+            <br></br>
+            {gameData ? <CodeSnippet gameData={gameData}/> : <p>Loading...</p>}
             <Typography.Title level={3} style={{ margin: 0 }}>
                 QR Code
             </Typography.Title>
             <br></br>
             {gameData ? <Settings gameData={gameData}/> : <p>Loading...</p>}
+            <br></br>
             
 
         </div>
