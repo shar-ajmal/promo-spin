@@ -1,9 +1,13 @@
 import {useState, useEffect, useRef} from 'react';
-import {db} from './firebase-config'
+import {db, functions} from './firebase-config'
 import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/firestore'
 import emailjs from '@emailjs/browser';
 import { Checkbox } from 'antd';
 import { CheckboxProps } from 'antd';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
+
+// import { checkEmailForGame } from '../functions';
 
 
 export default function UserForm({apothec, widget, setSelectedItemTop, gameData, wheelElements, selectItem}) {
@@ -26,6 +30,29 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
 
     const form = useRef();
     const didMount = useRef(false);
+    const checkEmail = httpsCallable(functions, 'checkEmailForGame');
+
+
+    async function checkDuplicates() {
+        // Call the function with email and gameId
+        console.log("inside check duplicates")
+        console.log(sendFields['email'])
+        console.log(gameData.game_id)
+        return checkEmail({ email: sendFields['email'], gameId: gameData.game_id })
+        .then((result) => {
+        // Read result of the Cloud Function call
+        const { exists } = result.data;
+        console.log(exists ? 'Email exists' : 'Email does not exist');
+        return exists
+        })
+        .catch((error) => {
+        // Getting the error details
+        const code = error.code;
+        const message = error.message;
+        const details = error.details;
+        console.error("Error calling checkEmailForGame:", message, details);
+        });
+    }
 
     // async function getRole() {
     //     console.log("ROLE")
@@ -116,13 +143,13 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         //     alert ("Business owner needs to upgrade plan! Email Limit Hit!")
         //     return;
         // }
-        const qSnap = await getDocs(query(collectedInfoRef, where("email", "==", sendFields['email']), where("game_id", "==", gameData.game_id)));
-        submitInfo()
-        // if (!qSnap.empty) {
-        //     alert("email alredy exists!")
-        // } else {
-        //     submitInfo()
-        // }
+        const emailExists = await checkDuplicates()
+        console.log(emailExists)
+        if (emailExists) {
+            alert("email alredy exists!")
+        } else {
+            submitInfo()
+        }
     }
 
     function modifyWinEmail(spinnedItem) {

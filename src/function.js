@@ -1,3 +1,5 @@
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { app } from "./firebase-config";
 // Function to return gcd of a and b
 export function gcd(a, b) {
     if (a == 0)
@@ -18,6 +20,11 @@ export function findGCD(arr, n) {
     }
     return result;
 }
+
+const functions = getFunctions(app); // Pass the Firebase app instance if not using the default app
+
+export const checkEmailForGame = httpsCallable(functions, 'checkEmailForGame');
+  
 
 export function validEntries(tableValues) {
     var probSum = 0

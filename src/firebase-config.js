@@ -5,6 +5,8 @@ import { getAnalytics } from "firebase/analytics";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
 
 import {
   getFirestore,
@@ -36,6 +38,8 @@ export const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+
+export const functions = getFunctions(app); // Use the Firebase app instance initialized earlier
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
