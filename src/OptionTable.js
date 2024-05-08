@@ -16,8 +16,10 @@ import { constructWheelArray } from './function';
 import RemainingProb from './RemainingProb';
 import { Button, Typography } from 'antd'
 
+import { validEntries } from './function';
+import { createAlternatingArrayWithDuplicates } from './function';
 
-export default function OptionTable({ tableValues, setTableValues, user, wheelElements, setWheelElements, gameData, setGameData, tableCollectionRef}) {
+export default function OptionTable({ randomCheck, randomArray, wheelElements, setWheelElements, setRandomArray, displayItems, tableValues, setTableValues, user, setDisplayItems, gameData, setGameData, tableCollectionRef}) {
     console.log("gae")
     console.log(wheelElements)
 
@@ -47,38 +49,6 @@ export default function OptionTable({ tableValues, setTableValues, user, wheelEl
         transition: 'all 0.3s ease-in-out',
       };
 
-    function validEntries() {
-        var probSum = 0
-        for (var i=0;i<tableValues.length;i++) {
-            if (tableValues[i]['name'] == "" || tableValues[i]['probability'] == "") {
-                alert("No fields can be empty!")
-                return false
-            }
-            console.log("testing prob")
-            console.log(parseInt(tableValues[i]['probability']))
-            console.log(parseInt(tableValues[i]['probability']) % 10)
-            let probValue = parseInt(tableValues[i]['probability'])
-
-            if(probValue % 5 != 0) {
-                alert("Probabilities need to be divisible by 5!")
-                return false
-            }
-
-            console.log(tableValues[i])
-            console.log(tableValues[i]['probability'])
-            probSum += parseInt(tableValues[i]['probability'])
-        }
-
-        console.log("probsum")
-        console.log(probSum)
-        if (probSum != 100) {
-            alert("Probabilities need to equal 100!")
-            return false
-        }
-
-        return true
-    }
-
     // const updateGame = async() => {
     //     const gamesCollectionRef = collection(db, 'games');
     //     const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
@@ -93,15 +63,23 @@ export default function OptionTable({ tableValues, setTableValues, user, wheelEl
     //     }
     // }
     function updateTableDatabase() {
-        if (!validEntries()) {
-            return
-        }
+        // if (!validEntries()) {
+        //     return
+        // }
 
         // updateGame()
         // console.log("In updateTableDatabase")
 
         var wheelArray = constructWheelArray(tableValues)
         setWheelElements(wheelArray)
+        var newRandomArray = createAlternatingArrayWithDuplicates(wheelArray)
+        setRandomArray(newRandomArray)
+        if (randomCheck) {
+            setDisplayItems(newRandomArray)
+        }
+        else {
+            setDisplayItems(wheelArray)
+        }
     }
 
     function addEntry() {
@@ -136,6 +114,7 @@ export default function OptionTable({ tableValues, setTableValues, user, wheelEl
             {tableValues.map((element, index) => (
                 <tr className="entry-row" key={"entry-row-" + index}>
                 <InputFields
+                    showCount maxLength={30}
                     fuckhello={'fuckhello'}
                     tableValues={tableValues}
                     setTableValues={setTableValues}

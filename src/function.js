@@ -58,6 +58,44 @@ export function validEntries(tableValues) {
     return true
 }
 
+export function createAlternatingArrayWithDuplicates(values, desiredLength = 10) {
+    console.log("in the creation of a random array")
+    // Filter out only strings and remove duplicates
+    const uniqueStrings = Array.from(new Set(values.filter(value => typeof value === 'string')));
+
+    // Ensure there are enough unique strings to avoid repeating the first and tenth item
+    if (uniqueStrings.length < 2 && desiredLength >= 10) {
+        throw new Error("Not enough unique strings to ensure the first and tenth items are different.");
+    }
+  
+    // Initialize the alternating array
+    let alternatingArray = [];
+  
+    // Fill the alternating array up to the desired length
+    while (alternatingArray.length < desiredLength) {
+        uniqueStrings.forEach(string => {
+            // Check if adding this string would repeat the first item as the tenth
+            if (alternatingArray.length === 9 && string === alternatingArray[0]) {
+                // Find an alternative string to avoid repetition
+                const alternativeString = uniqueStrings.find(s => s !== string);
+                if (alternativeString) {
+                    alternatingArray.push(alternativeString);
+                }
+                // Skip adding if no alternative is found; assumes there are at least 2 unique strings
+            } else if (alternatingArray.length < desiredLength) {
+                alternatingArray.push(string);
+            }
+        });
+    }
+
+    console.log("printing alternating array")
+    console.log(alternatingArray)
+  
+    return alternatingArray;
+}
+
+
+
 export function shuffleArray(array) {
     let valueDict = {}
     for (let i=0; i < array.length; i++) {

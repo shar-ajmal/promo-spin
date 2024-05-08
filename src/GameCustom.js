@@ -10,6 +10,7 @@ import Settings from "./Settings";
 import GameInfo from "./GameInfo";
 import GameNavBar from "./GameNavbar";
 import UploadLogo from "./UploadLogo";
+import { createAlternatingArrayWithDuplicates } from "./function";
 
 import { updateDataModelIfNeeded } from "./updateFunctions";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
@@ -19,7 +20,7 @@ import { collection, getDocs, addDoc, query, where, updateDoc, doc } from 'fireb
 import { constructWheelArray, validEntries } from './function';
 import { db, storage } from './firebase-config';
 import { useFetcher, useParams } from 'react-router-dom';
-import { Button, Typography } from 'antd'
+import { Button, Typography, Checkbox } from 'antd'
 
 import { useNavigate } from "react-router-dom";
 
@@ -38,6 +39,13 @@ export default function GameCustom({user}) {
     const [logoUrl, setLogoUrl] = useState('')
     const [fbPage, setFBPage] = useState('')
     const [igHandle, setIGHandle] = useState('')
+    const [randomCheck, setRandomCheck] = useState(false)
+    const [randomArray, setRandomArray] = useState([])
+    const [displayItems, setDisplayItems] = useState([])
+    const [consent, setConsent] = useState(true)
+
+    const { Text, Link } = Typography;
+
 
     
     const [gameData, setGameData] = useState()
@@ -108,6 +116,18 @@ marginRight: '50px'
   }, [gameData])
 
   useEffect(() => {
+    if (wheelElements.length > 0) {
+      const newRandomArray = createAlternatingArrayWithDuplicates(wheelElements)
+      console.log("Printing random array")
+      console.log(newRandomArray)
+      console.log(wheelElements)
+      setRandomArray(newRandomArray)
+    }
+    console.log("printing random array")
+    console.log(randomArray)
+  }, [wheelElements])
+
+  useEffect(() => {
     if (gameData != undefined) {
       setWheelColor(gameData.wheelColor)
       setTextColor(gameData.textColor)
@@ -122,6 +142,43 @@ marginRight: '50px'
 
     }
   }, [gameData]);
+
+  useEffect(() => {
+    if (gameData != null) {
+      if (gameData.random_check) {
+        console.log("random check detected in object")
+        console.log(gameData.random_check)
+        setRandomCheck(gameData.random_check)
+      }
+      else {
+        setRandomCheck(false)
+      }
+    }
+  }, [gameData])
+
+  useEffect(() => {
+    if (gameData != null) {
+      console.log("We've detected game data and are in consent")
+      console.log(gameData.consent_check)
+      if (gameData.consent_check !== undefined) {
+        console.log("random consent detected in object")
+        console.log(gameData.consent_check)
+        setConsent(gameData.consent_check)
+      }
+      else {
+        console.log("we are resetting consent to true")
+        setConsent(true)
+      }
+    }
+  }, [gameData])
+
+  const onChangeCheckbox = (e) => {
+    setRandomCheck(e.target.checked);
+  };
+
+  const onChangeConsent = (e) => {
+    setConsent(e.target.checked);
+  };
 
     useEffect(() => {
         console.log("Printing user info in custom game page")
@@ -143,6 +200,15 @@ marginRight: '50px'
         console.log(gameData.wheel_fields)
       }
     }, [gameData])
+
+    useEffect(() => {
+      if (randomCheck) {
+        setDisplayItems(randomArray)
+      }
+      else {
+        setDisplayItems(wheelElements)
+      }
+    }, [randomCheck, wheelElements])
 
     // const getTableData = async() => {
     //     console.log("getting user dt")
@@ -259,13 +325,27 @@ marginRight: '50px'
         saveGameFields()
         saveSocialFields()
         saveGameColorsDisplay()
-        saveLogo()
+        saveRandomCheck()
+        saveConsentCheck()
+        // saveLogo()
         updateGame()
 
-        var wheelArray = constructWheelArray(tableValues)
-        setWheelElements(wheelArray)
+        updateWheel()
         alert("Changes Saved")
       }
+    }
+
+    function updateWheel() {
+      var wheelArray = constructWheelArray(tableValues)
+        setWheelElements(wheelArray)
+        var newRandomArray = createAlternatingArrayWithDuplicates(wheelArray)
+        setRandomArray(newRandomArray)
+        if (randomCheck) {
+            setDisplayItems(newRandomArray)
+        }
+        else {
+            setDisplayItems(wheelArray)
+        }
     }
 
     const saveLogo = async () => {
@@ -330,8 +410,11 @@ marginRight: '50px'
   const saveGameFields = async() => {
       const gamesCollectionRef = collection(db, 'games');
       const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+      console.log("Save game fields")
       getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
           const docRef = doc(db, "games", res.docs[0].id);
+          console.log("updating the game fields")
+          console.log(formFields)
           console.log(docRef)
           updateDoc(docRef, { 'form_fields': formFields });
       })
@@ -353,6 +436,34 @@ marginRight: '50px'
           console.log('No matching documents.');
           return;
       }
+  }
+
+  const saveRandomCheck = async() => {
+    const gamesCollectionRef = collection(db, 'games');
+    const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+    getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+        const docRef = doc(db, "games", res.docs[0].id);
+        console.log(docRef)
+        updateDoc(docRef, { 'random_check': randomCheck });
+    })
+    if (docRef.empty) {
+        console.log('No matching documents.');
+        return;
+    }
+}
+
+  const saveConsentCheck = async() => {
+    const gamesCollectionRef = collection(db, 'games');
+    const docRef = await getDocs(query(gamesCollectionRef, where('user_id', '==', user.uid), where('game_id', '==', gameData.game_id)));
+    getDocs(query(gamesCollectionRef, where("user_id", "==", user.uid), where('game_id', '==', gameData.game_id))).then((res) => {
+        const docRef = doc(db, "games", res.docs[0].id);
+        console.log(docRef)
+        updateDoc(docRef, { 'consent_check': consent });
+    })
+    if (docRef.empty) {
+        console.log('No matching documents.');
+        return;
+    }
   }
     
   return (
@@ -394,7 +505,7 @@ marginRight: '50px'
       </div>
       <div className="desktop-elements">
         <div class="section1">
-          {gameData ? <GameInfo igHandle={igHandle} setIGHandle={setIGHandle} fbPage={fbPage} setFBPage={setFBPage} imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+          {gameData ? <GameInfo formFields={formFields} setFormFields={setFormFields} igHandle={igHandle} setIGHandle={setIGHandle} fbPage={fbPage} setFBPage={setFBPage} imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
         </div>
         <div class="section2">
 
@@ -403,23 +514,36 @@ marginRight: '50px'
             </Typography.Title>
             <br></br>
             { gameData ? <GameNavBar imagePreviewUrl={imagePreviewUrl} displayName={displayName} gameName={gameName} wheelColor={wheelColor} textColor={textColor} gameData={gameData}></GameNavBar> : <p>Loading...</p>}
-            <SpinWheel wheelElements={wheelElements} wheelColor={wheelColor} textColor={textColor}/>
-            {gameData ? <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/> : <p>Loading...</p>}
+            <SpinWheel wheelElements={displayItems} wheelColor={wheelColor} textColor={textColor}/>
+            <br></br>
+            <Checkbox checked={randomCheck} onChange={onChangeCheckbox}>Randomize Wheel Elements</Checkbox><br></br>
+            {console.log("printing consent inline")}
+            {console.log(consent)}
+
+            <Checkbox checked={consent} onChange={onChangeConsent}>Display Consent Checkbox</Checkbox> <br></br>
+            <Text type="danger">
+                Please read <a href="/Disclaimer_ Removing the Consent Checkbox.pdf" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>this disclaimer</a> before disabling the consent checkbox.
+            </Text>
+
+            {gameData ? <OptionTable setWheelElements={setWheelElements} setRandomArray={setRandomArray} wheelElements={wheelElements} randomArray={randomArray} user={user} displayItems={displayItems} gameData={gameData} setGameData={setGameData} setDisplayItems={setDisplayItems} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/> : <p>Loading...</p>}
         </div>
       </div>
         <div className="tab-section">
         {activeTab === "tab1" && (
             <div style={{padding: '20px'}}>
-              {gameData ? <GameInfo igHandle={igHandle} setIGHandle={setIGHandle} fbPage={fbPage} setFBPage={setFBPage}  imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
+              {gameData ? <GameInfo formFields={formFields} setFormFields={setFormFields}  igHandle={igHandle} setIGHandle={setIGHandle} fbPage={fbPage} setFBPage={setFBPage}  imagePreviewUrl={imagePreviewUrl} file={file} setFile={setFile} setImagePreviewUrl={setImagePreviewUrl} displayName={displayName} setDisplayName={setDisplayName} gameName={gameName} setGameName={setGameName} setWheelColor={setWheelColor} setTextColor={setTextColor} wheelColor={wheelColor} textColor={textColor} user={user} gameData={gameData}></GameInfo> : <p>Loading...</p>}
             </div>
         )}
         {activeTab === "tab2" && (
           <div>
             <GameNavBar imagePreviewUrl={imagePreviewUrl} displayName={displayName} gameName={gameName} wheelColor={wheelColor} textColor={textColor} gameData={gameData}></GameNavBar>
-            <SpinWheel wheelElements={wheelElements} wheelColor={wheelColor} textColor={textColor}/>
-            <OptionTable user={user} wheelElements={wheelElements} gameData={gameData} setGameData={setGameData} setWheelElements={setWheelElements} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/>
-
-          </div>
+            <SpinWheel wheelElements={displayItems} wheelColor={wheelColor} textColor={textColor}/>
+            <Checkbox checked={randomCheck} onChange={onChangeCheckbox}>Randomize Wheel Elements</Checkbox><br></br>
+            <Checkbox checked={consent} onChange={onChangeConsent}>Display Consent Checkbox</Checkbox><br></br>
+            <Text type="danger">
+                Please read <a href="/Disclaimer_ Removing the Consent Checkbox.pdf" target="_blank" style={{ color: 'inherit', textDecoration: 'underline' }}>this disclaimer</a> before disabling the consent checkbox.
+            </Text>
+            <OptionTable setWheelElements={setWheelElements} setRandomArray={setRandomArray} wheelElements={wheelElements} randomArray={randomArray} user={user} displayItems={displayItems} gameData={gameData} setGameData={setGameData} setDisplayItems={setDisplayItems} tableValues={tableValues} setTableValues={setTableValues} tableCollectionRef={tableCollectionRef}/>          </div>
         )}
         </div>
     </div>

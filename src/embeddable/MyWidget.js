@@ -10,11 +10,9 @@ import PopupBox from '../PopupBox';
 import '../PopupBox.css'
 import '../styles.css'
 
-
-
 function MyWidget({gameId}) {
   const [wheelElements, setWheelElements] = useState([])
-  const [gameData, setGameData] = useState([])
+  const [gameData, setGameData] = useState(null)
   const gamesCollectionRef = collection(db, 'games')
   const [isPopupVisible, setPopupVisible] = useState(false);
 
@@ -51,7 +49,7 @@ function MyWidget({gameId}) {
       console.log("nah, f that")
       setPopupVisible(false)
     }
-  })
+  }, [])
 
   function closePopUpBox() {
     setPopupVisible(false)
@@ -62,14 +60,15 @@ function MyWidget({gameId}) {
     // Your spinwheel component logic here
     return (
       // Your spinwheel JSX here
+      // gameData != null ? (
       <div>
         {isPopupVisible && 
-        <PopupBox gameData={gameData} wheelElements={wheelElements} onClose={() => closePopUpBox()}>
-          <h1>Your React Component</h1>
+        <PopupBox setWheelElements={setWheelElements} gameData={gameData} wheelElements={wheelElements} onClose={() => closePopUpBox()}>
           {/* You can place your React component here */}
         </PopupBox>
         }
       </div>
+      // ): <div></div>
     );
   }
   

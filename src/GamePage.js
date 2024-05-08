@@ -72,6 +72,7 @@ export default function GamePage({user}) {
                 'game_enabled': true, 
                 "wheelColor": '#333',
                 'textColor': "#ffffff",
+                'random_check': false,
             })
 
             const gameUrl = "/game/" + newGameId

@@ -13,6 +13,7 @@ export default function InputFields({fuckhello,tableValues, setTableValues, id, 
         setFieldName(fName)
         setFieldProbability(fProbability)
     })
+
     console.log("Inside INPUT FIELDS")
     console.log(fuckhello)
     console.log(fName)
@@ -66,7 +67,7 @@ export default function InputFields({fuckhello,tableValues, setTableValues, id, 
     
     return (
         <>
-            <td><Input value={fieldName} onChange={changeName}/></td>
+            <td><Input showCount maxLength={30} value={fieldName} onChange={changeName}/></td>
             <td className='prob-row'><Input value={fieldProbability} onChange={changeProbability} type="number" pattern="^-?[0-9]\d*\.?\d*$"/> <div className='prob-percent'>%</div> </td>
             <td><Button danger class="button-red" onClick={deleteEntry}>Delete</Button></td>
         </>

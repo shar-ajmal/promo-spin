@@ -43,6 +43,11 @@ export default class SpinWheel extends React.Component {
       <div className="wheel-container" style={wheelVars}>
         <div className={`wheel ${spinning}`} style={wheelVars}>
           {items.map((item, index) => (
+            item.length > 10 ? 
+            <div className={`wheel-item small-font`} key={index} style={{ '--item-nb': index }}>
+              {item}
+            </div>
+            :
             <div className={`wheel-item ${smallFont}`} key={index} style={{ '--item-nb': index }}>
               {item}
             </div>

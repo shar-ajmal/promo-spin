@@ -14,6 +14,7 @@ export default function GameFields({user, formFields, setFormFields}) {
     // }, [])
 
     function findFormFieldsIndex(fieldId) {
+        console.log("adding the index fields")
         for (var i=0; i<formFields.length; i++) {
             if (formFields[i]['fieldId'] === fieldId) {
                 return i
@@ -26,6 +27,7 @@ export default function GameFields({user, formFields, setFormFields}) {
         console.log(formFieldIndex)
         var updatedFormFields = [...formFields]
         updatedFormFields[formFieldIndex]['fieldName'] = e.target.value
+        console.log("we're updating the fields")
         setFormFields(updatedFormFields)
     }
 
@@ -33,10 +35,13 @@ export default function GameFields({user, formFields, setFormFields}) {
         var formFieldIndex = findFormFieldsIndex(fieldId)
         var updatedFormFields = [...formFields]
         updatedFormFields.splice(formFieldIndex, 1)
+        console.log("deleting the fields")
         setFormFields(updatedFormFields)
     }
 
     function addNewField() {
+        console.log("adding the fields")
+
         setFormFields(rows => [...rows, {'fieldName': '', 'deletable': true, 'fieldId': uuidv4()}])
     }
 
@@ -44,29 +49,36 @@ export default function GameFields({user, formFields, setFormFields}) {
         <div>
                 {console.log("printing field values")}
                 {console.log(formFields)}
-            <div className="form-fields">
-                {formFields.map((element, index) => {
-                    return (
-                        <div className="input-container">
-                            {console.log("In render looking at elements")}
-                            {console.log(element.fieldId)}
-                            {element.deletable ?  
-                            <>
-                                <Space.Compact style={{ width: '100%' }}>
-                                <Input value={element.fieldName} onChange={(e) => {handleChange(e, element.fieldId)}}></Input>
-                                {/* <input value={element.fieldName} onChange={(e) => {handleChange(e, element.fieldId)}}/> */}
-                                <Button danger onClick={() => deleteFormField(element['fieldId'])}>Delete</Button>
-                                </Space.Compact>
-                            </>
-                            : 
-                            <>
-                                <Input readOnly={true} value={element.fieldName}></Input>
-                            </>
-                            }
+                {
+                    formFields != undefined ? (
+                        <div className="form-fields">
+                        {formFields.map((element, index) => {
+                            return (
+                            <div className="input-container" key={element.fieldId}> {/* Ensure each child in a list has a unique "key" prop. */}
+                                {console.log("In render looking at elements")}
+                                {console.log(element.fieldId)}
+                                {element.deletable ?  
+                                <>
+                                    <Space.Compact style={{ width: '100%' }}>
+                                    <Input value={element.fieldName} onChange={(e) => {handleChange(e, element.fieldId)}}></Input>
+                                    <Button danger onClick={() => deleteFormField(element.fieldId)}>Delete</Button>
+                                    </Space.Compact>
+                                </>
+                                : 
+                                <>
+                                    <Input readOnly={true} value={element.fieldName}></Input>
+                                </>
+                                }
+                            </div>
+                            );
+                        })}
                         </div>
                     )
-                })}
-            </div>
+
+                    :
+                    <div></div>
+                }
+
             <div className="form-field-button-section">
                 <Button type='primary' onClick={addNewField}>Add New Field</Button>
                 {/* <button onClick={save}>Save</button> */}

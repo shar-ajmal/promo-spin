@@ -15,8 +15,8 @@ import CodeSnippet from "./CodeSnippet";
 
 import "./gamecustom.css";
 
-export default function GameInfo ({igHandle, setIGHandle, fbPage, setFBPage, user, gameData, textColor, wheelColor, setWheelColor, setTextColor, gameName, setGameName, displayName, setDisplayName, file, setFile, imagePreviewUrl, setImagePreviewUrl}) {
-    const [formFields, setFormFields] = useState([])
+export default function GameInfo ({igHandle, setIGHandle, fbPage, setFBPage, user, gameData, textColor, wheelColor, setWheelColor, setTextColor, gameName, setGameName, displayName, setDisplayName, file, setFile, imagePreviewUrl, setImagePreviewUrl, formFields, setFormFields}) {
+    // const [formFields, setFormFields] = useState([])
     // const [gameName, setGameName] = useState()
    
 

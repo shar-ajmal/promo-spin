@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import {db, functions} from './firebase-config'
-import { collection, getDocs ,addDoc, query, where, onSnapshot } from 'firebase/firestore'
+import { collection, doc, getDocs, getDoc ,addDoc, query, where, onSnapshot } from 'firebase/firestore'
 import emailjs from '@emailjs/browser';
 import { Checkbox } from 'antd';
 import { CheckboxProps } from 'antd';
@@ -10,13 +10,14 @@ import { getFunctions, httpsCallable } from 'firebase/functions';
 // import { checkEmailForGame } from '../functions';
 
 
-export default function UserForm({apothec, widget, setSelectedItemTop, gameData, wheelElements, selectItem}) {
+export default function UserForm({apothec, widget, spin, setSelectedItemTop, gameData, wheelElements, selectItem}) {
     const collectedInfoRef = collection(db, 'collected_info')
     const [role, setRole] = useState("")
     const [winEmail, setWinEmail] = useState("")
     const [adminEmail, setAdminEmail] = useState("")
     const freePlanLimit = 150;
     const [consent, setConsent] = useState(false)
+    const [userName, setUserName] = useState('')
 
     console.log("in user form")
     // console.log(userId)
@@ -108,9 +109,37 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         setAdminEmail(doc.email)
     }
 
+    const getUserName = async(userId) => {
+        const docRef = doc(db, "users", userId);
+        try {
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+            console.log("User name:", docSnap.data().name);
+            setUserName(docSnap.data().name)
+            return docSnap.data().name; // Return just the "name" field
+            } else {
+            console.log("No such document!");
+            return null;
+            }
+        } catch (error) {
+            console.error("Error getting document:", error);
+            return null;
+        }
+    }
+
     useEffect(() => {
         if (gameData != undefined) {
             getAdminEmail()
+        }
+    }, [gameData])
+
+    useEffect(() => {
+        if (gameData != undefined) {
+            console.log("getting user name")
+            var recievedName = getUserName(gameData.user_id)
+            // console.log(recievedName)
+            // setUserName(recievedName)
         }
     }, [gameData])
 
@@ -143,10 +172,16 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         //     alert ("Business owner needs to upgrade plan! Email Limit Hit!")
         //     return;
         // }
+        spin()
         const emailExists = await checkDuplicates()
         console.log(emailExists)
         if (emailExists) {
-            alert("email alredy exists!")
+            if (window.confirm("email alredy exists!")) {
+                window.location.reload();
+              }
+            // alert("email alredy exists!")
+            // // Refresh the page after the user clicks "OK"
+            // location.reload();
         } else {
             submitInfo()
         }
@@ -247,6 +282,7 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         }
 
         console.log("sending email")
+        localStorage.setItem('spinwheel_shown', true);
     }
 
     function sendEmail () {
@@ -261,6 +297,7 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         allFields['item_name'] = selectedItem
         allFields['send_to_email'] =  sendFields['email']
         allFields['admin_email'] = adminEmail
+        allFields['user_name'] = userName
         // allFields['user_name']:
         allFields['game_name'] = gameData['game_name']
         console.log("printing out all fields")
@@ -302,15 +339,14 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
         setConsent(e.target.checked)
       };
 
-    return (
-        <form class="user-form input-margin">
+      return (
+        <form className="user-form input-margin">
             {console.log("loading game data")}
             <Checkbox onChange={checkboxOnChange}>Consent to Receiving Marketing Material</Checkbox>
-            {console.log(gameData['form_fields'])}
-            {
-                gameData && Array.isArray(gameData['form_fields']) &&
-                gameData['form_fields'].map((element, index) => {
-                    return (
+            {gameData ? (
+                <>
+                    {console.log(gameData['form_fields'])}
+                    {Array.isArray(gameData['form_fields']) && gameData['form_fields'].map((element, index) => (
                         <input 
                             key={index}
                             placeholder={element.fieldName} 
@@ -318,11 +354,12 @@ export default function UserForm({apothec, widget, setSelectedItemTop, gameData,
                             value={sendFields[element['fieldName']]} 
                             onChange={handle_change} 
                         />
-                    );
-                })
-            }
-
-            <button onClick={handleSubmit} type="submit" class="submit-button button-green">Spin</button>
+                    ))}
+                </>
+            ) : (
+                <p>Loading game data...</p> // Optional: Placeholder content while gameData is not available
+            )}
+            <button onClick={handleSubmit} type="submit" className="submit-button button-green">Spin</button>
         </form>
-    )
+    );
 }

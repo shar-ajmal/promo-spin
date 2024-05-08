@@ -10,8 +10,10 @@ export default class Wheel extends React.Component {
     console.log(this.props.selectedItem)
     this.state = {
       selectedItem: null,
+      spinningOn: false,
     };
     this.selectItem = this.selectItem.bind(this);
+    this.spin = this.spin.bind(this);
   }
 
   selectItem() {
@@ -36,6 +38,10 @@ export default class Wheel extends React.Component {
     }
   }
 
+  spin() {
+    this.setState({spinningOn: true})
+  }
+
   render() {
     const { selectedItem } = this.state;
     const  items = this.props.wheelElements
@@ -53,7 +59,8 @@ export default class Wheel extends React.Component {
       '--wheel-color': this.props.wheelColor,
       '--text-color': this.props.textColor,
     };
-    const spinning = selectedItem !== null ? 'spinning' : '';
+    // const spinning = selectedItem !== null ? 'spinning' : '';
+    const spinning = this.state.spinningOn ? 'spinning' : '';
     const smallFont = items.length > 10 ? 'small-font' : '';
 
     if (this.props.apothec) {
@@ -70,14 +77,19 @@ export default class Wheel extends React.Component {
         </p>
         <div className="wheel-container" style={wheelVars}>
           <div className={`wheel ${spinning}`} style={wheelVars}>
-            {items.map((item, index) => (
+          {items.map((item, index) => (
+            item.length > 10 ? 
+            <div className={`wheel-item small-font`} key={index} style={{ '--item-nb': index }}>
+              {item}
+            </div>
+            :
             <div className={`wheel-item ${smallFont}`} key={index} style={{ '--item-nb': index }}>
-            {item}
-              </div>
-            ))}
+              {item}
+            </div>
+          ))}
           </div>
         </div>
-        <UserForm widget={this.props.widget} apothec={this.props.apothec} gameData={this.props.gameData} setSelectedItemTop={this.props.setSelectedItemTop} selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
+        <UserForm spin={this.spin} spinningOn={this.state.spinningOn} widget={this.props.widget} apothec={this.props.apothec} gameData={this.props.gameData} setSelectedItemTop={this.props.setSelectedItemTop} selectedItem={this.state.selectedItem} wheelElements={this.props.wheelElements} selectItem={this.selectItem}></UserForm>
       </div>
     );
   }

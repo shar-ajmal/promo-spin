@@ -25,14 +25,18 @@ window.onload = () => {
     console.log("window has been loaded")
     const triggerDiv = document.getElementById('spinWheelTrigger');
     
-    if (triggerDiv) {
+    // if (triggerDiv) {
         console.log("we've detected the trigger div")
         const currentScript = document.currentScript || (() => {
-            const scripts = document.getElementsByTagName('script');
-            return scripts[scripts.length - 1];
+            const scripts = document.getElementById('promo-spin-script');
+            return scripts;
         })();
-        const gameId = currentScript.getAttribute('data-game-id');
-        
-        renderMyWidget(gameId);
-    }
+            console.log(currentScript,"currentScript")
+            let gameId = currentScript.getAttribute('data-game-id');
+            console.log("in time out function")
+            console.log("getting game id in timeout")
+            console.log(gameId)
+            // Any additional code that uses gameId can go here.
+            renderMyWidget(gameId);
+    // }
 };
